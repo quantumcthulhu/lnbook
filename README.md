@@ -27,7 +27,7 @@ The current status of the book is "IN PROGRESS". See below for status of specifi
 |-------|------|:------:|
 | [Preface and Acknowledgments](preface.asciidoc) | ### | :arrows_clockwise: |
 | [Glossary](glossary.asciidoc) | ############# | :arrows_clockwise: |
-| [Introduction](01_introduction.asciidoc) | ##### | :mag: |
+| [Вступ](01_introduction.asciidoc) | ##### | :mag: |
 | [Getting Started](02_getting_started.asciidoc) | ########### | :mag: |
 | [LN Basics (How LN Works)](03_how_ln_works.asciidoc) | ########################## | :mag: |
 | [Intro to LN Routing (HTLCs)](routing.asciidoc) | ###################### | :lock_with_ink_pen: |
