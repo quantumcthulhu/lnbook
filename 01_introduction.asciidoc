@@ -1,107 +1,106 @@
 [role="pagenumrestart"]
 [[intro_what_is_the_lightning_network]]
-== Introduction
+== Вступ
 
-Welcome to Mastering the Lightning Network!
+Ласкаво просимо до Освоєння Lightning Network!
 
-The Lightning Network, abbreviated with LN, is a protocol for using Bitcoin in a smart and non-obvious way.
-Thus it is a second layer technology on top of Bitcoin.
-It is changing the way people exchange value online and it's one of the most exciting advancements to happen to the Bitcoin network over the past few years. Right now, the Lightning Network is in its infancy. In concept it's about 5 years old, in implementation about 3 years old. We're only beginning to see the opportunities the Lightning Network provides including improved privacy, speed, and scale. With core knowledge of the Lightning Network, you can help shape the future of the network while building opportunities for yourself as well. Some basic knowledge about Bitcoin is assumed but can be readily acquired by reading the first two chapters of _Mastering Bitcoin_ which are available for free online.
+Lightning Network (Блискавична Мережа, скорочено LN) - це протокол для використання Біткоїна у розумний і неочевидний спосіб.
+Ця технологія працює на другому рівні поверх Біткоїна.
+Вона змінює спосіб, яким люди обмінуються цінностями онлайн і є одним із найбільш захоплюючих покращень, що трапились з мережею Біткоїн останнім часом. На даний момент Lightning Network ще перебуває у дитячому віці. Як концепції їй 5 років, імплементації близько 3 років. Ми лише починаємо роздивлятись можливості, які дає нам Lightning Network, серед них ми бачимо кращу конфіденційність, швидкість та здатність до масштабування. Маючи розуміння основ Lightning Network, ви можете прийняти участь в формуванні майбутнього мережі, одночасно створюючи можливості і для себе. Для розуміння матеріалу потрібні деякі базові знання про Біткоїн, але їх легко здобути, прочитавши перші два розділи книги _Mastering Bitcoin_, яка доступна онлайн і безкоштовно.
 
-While the bulk of this book is written for programmers, the first two chapters are written to be approachable by anyone regardless of technical experience. In order to better understand how the technology actually works, and why people use it, we'll be following a number of users and their stories. But first, we'll introduce some of the key concepts in the Lightning Network. Let's get started with why the Lightning Network was proposed in the first place.
+Незважаючи на те, що більша частина цієї книги написана для програмістів, перші два розділи написані таким чином, щоб бути доступними кожному, незалежно від його технічного досвіду. Щоб краще зрозуміти, як ця технологія насправді працює, і чому люди її використовують, ми будемо стежити за кількома користувачами та їхніми історіями. Але спочатку ми представимо деякі ключові поняття в Lightning Network. Почнемо з того, для чого взагалі була запропонована Lightning Network.
 
-=== Motivation for the Lightning Network
+=== Мотивація Lightning Network
 
-As Bitcoin and the demand for transactions grows, the number of transactions in each block will increase until it eventually hits the block size limit. When blocks are full, excess transactions are left to wait in a queue. Many users increase the fees they're willing to pay in order to buy space for their transaction in the next block. At the same time, an increasing number of users are left behind. Their transactions, e.g. microtransactions such as common small spendings, are not economically qualified to be on the network. However, increasing block size simply shifts the problem to node operators, where each increase in blocksize results in a resource increase multiplied by an order of magnitude.
+По мірі розвитку мережі Біткоїн та зростання попиту на транзакції, збільшується кількість транзакцій в кожному блоці, поки вона врешті-решт не впирається в ліміт розміру блоку. Коли блоки заповнені повністю, транзакції, для яких не знайшлось місця в жодному блоці, залишаються чекати в черзі. Багато користувачів збільшують комісію, щоб заплатити за місце для своєї транзакції в наступному блоці. Разом із тим все більше користувачів залишаються пасти задніх. Їхні операції, наприклад мікротранзакції, повсякденні витрати на невеликі суми, не мають економічного сенсу для існування в мережі Біткоїн. Для вирішення проблеми можна було б просто збільшити ліміт розміру блоку, але таке рішення лише перекладає проблему на операторів нод мережі Біткоїн, адже кожне збільшення розміру блоку призводить до збільшення потреби в ресурсах.
 
-Because blockchains are gossip protocols, each node is required to know and validate every single transaction that occurs on the network. Furthermore, once validated, each transaction and block must be propagated to the node's "neighbors", multiplying the bandwidth requirements. As such, the greater the block size, the greater the bandwidth, processing, and storage requirements for each individual node, effectively limiting the amount of scaling that can be done this way. Furthermore, scaling in this fashion has an undesirable side effect of centralizing the network by reducing the number of nodes and node operators. Since node operators are not compensated for running nodes, if nodes are very expensive to run, only a few well funded node operators will continue to run nodes.
+Оскільки блокчейни - це gossip-протоколи (протоколи "пліток", де кожен учасник ділиться "плітками" з іншими випадково вибраними учасниками), кожна нода має знати та перевіряти кожну транзакцію, що трапляється в мережі. Крім цього, після перевірки кожна транзакція та кожний блок мають бути відправлені нодам-"сусідам", що примножує вимоги до пропускної здатності. Чим більший розмір блоку, тим більші вимоги до пропускної здатності, а також до ресурсів, потрібних для обробки та зберігання інформації для кожної окремої ноди. Таким чином, збільшення розміру блоку знижує ефективність масштабування. Більше того, такий підхід до масштабування має небажаний побічний ефект централізації мережі за рахунок зменшення кількості нод та їх операторів. Оскільки оператори нод не отримують компенсацій за працюючі ноди, то у разі, якщо утримання нод стане дуже витратним, лише кілька добре профінансованих операторів зможуть утримувати власні ноди.
 
-[NOTE]
+[Примітка]
 ====
-The side effects of increasing the block size or decreasing the block time with respect to centralization of the network are severe as a few calculations with the numbers show. 
-Let us assume the usage of Bitcoin grows so that the network has to process 40,000 transactions per second.
-Assuming 250 Bytes on average per transaction this would result in a data stream of 10 Megabyte per second or 80 Mbit/s just to be able to receive all the transactions.
-This does not include the traffic overhead of forwarding the transaction information to other peers.
-While single hosts on the internet could handle such a load of traffic our current internet would not be able to support this traffic for a large fraction of hosts.
-Also storing this information locally would result in 864,000 Megabyte per day. This is roughly 1 Terabyte of data or the size of a hard drive.
-While verifying 40,000 ECDSA signatures per second seems barely feasible (c.f.: https://bitcoin.stackexchange.com/questions/95339/how-many-bitcoin-transactions-can-be-verified-per-second) nodes could hardly catch up initial sync of the blockchain. 
-====
-
-But what if each node wasn't required to know and validate every single transaction? What if there was a way to have scalable off-chain transactions, without losing the security of the Bitcoin network?
-
-In February 2015, Joseph Poon and Thaddeus Dryja proposed a possible solution to the Bitcoin Scalability Problem, with the publication of _"The Bitcoin Lightning Network: Scalable Off-Chain Instant Payments"_ footnote:[Joseph Poon, Thaddeus Dryja - "The Bitcoin Lightning Network:
-Scalable Off-Chain Instant Payments" (https://lightning.network/lightning-network-paper.pdf).] In the meanwhile outdated whitepaper, Poon and Dryja estimate that in order for Bitcoin to reach the 47,000 transactions per second processed at peak by Visa, it would require 8 GB blocks. This would make running a node completely untenable for anyone but large scale enterprises and industrial grade operations. The result would be a network in which only a few users can actually validate the state of the ledger, which ultimately breaks the trust model of Bitcoin.
-
-The Lightning Network proposes a new network, a "second layer", where users can make payments to each other peer-to-peer, without the necessity to publish a transaction to the Bitcoin blockchain for each payment.
-Users may pay each other on the Lightning Network as many times as they want, making use of the Bitcoin blockchain only in order to load bitcoin onto the Lightning network initially and to "settle", that is: remove bitcoin from the Lightning Network.
-The result is that many more Bitcoin payments can take place "off-chain", with only the initial loading and final settlement transactions needing to be validated and stored by Bitcoin nodes.
-Aside from reducing the burden on nodes, payments on the Lightning Network will be cheaper for users as they do not need to pay blockchain fees, and more private for users as they are not published to all participants of the network and furthermore not stored permanently. 
-
-While the Lightning Network was initially conceived for Bitcoin, it can be implemented on any blockchain that meets its technical requirements.
-
-=== Lightning Network Basic Concepts
-
-As we start exploring the Lightning Network, we will encounter some technical terminology that might, at first, be confusing and a bit difficult to understand. While all of these concepts and terms will be explained in detail as we progress through the book, and are defined in the glossary, we need some basic clarifications to get started. Here are some of the concepts you will encounter in the first two chapters of this book:
-
-Node:: A computer that participates in a network. A Lightning node is a computer that participates in the Lightning Network. A Bitcoin node is a computer that participates in the Bitcoin Network. Typically a Lightning Network user will run a Lightning node and a Bitcoin node.
-
-Blockchain:: A distributed transaction ledger, produced by a network of computers. Bitcoin, for example, is a system that produces a blockchain. The Lightning Network is not itself a blockchain, nor does it produce a blockchain. It is a network that relies on an existing external blockchain for its security.
-
-Transaction:: A data structure that records the transfer of control over some funds (e.g. some bitcoin). The Lightning Network relies moreover on Bitcoin transactions (or those of another blockchain) to track control of funds.
-
-Payment:: When value is exchanged on the Lightning Network we call this a payment as the term Transaction is the technical term for entries on the Bitcoin Blockchain.
-
-Payment Channel:: A _financial relationship_ between two nodes on the Lightning Network, typically implemented by multi-signature Bitcoin transactions that share control over bitcoin between the two Lightning nodes.
-
-On-Chain vs. Off-Chain:: A payment is "on-chain" if it is recorded as a transaction on the Bitcoin (or other underlying) blockchain. Payments sent via payment channels between Lightning nodes, and which are not visible in the underlying blockchain, are called "off-chain" payments.
-
-More detailed definitions of these and many other terms can be found in the <<glossary>>. Throughout this book we will explain what these concepts mean and how these technologies actually work.
-
-[TIP]
-====
-Throughout this book you will see "Bitcoin" with the first letter capitalized, which refers to the _Bitcoin System_ and is a proper noun. You will also see "bitcoin", with a lower-case _b_, which refers to the currency unit.
+Обчислення демонструють, що збільшення розміру блоку або зменшення часу блоку мали б суттєвий побічний ефект у вигляді централізації мережі. 
+Припустимо, що використання мережі Біткоїна досягло 40,000 транзакцій в секунду.
+При середньому розмірі транзакції 250 Байт, це вимагає швидкості передачі данних 10 МБ/с або 80 Мбіт/с лише для скачування всіх транзакцій без урахування необхідності передачі всієї цієї інформації іншим пірам.
+Окремі хости в Інтернеті здатні передавати трафік в таких об'ємах, проте велика частина хостів в теперішньому Інтернеті не змогла б впоратись з таким трафіком.
+Для локального зберігання цієї інформації потрібно 864,000 Мегабайт на день. Це майже 1 Терабайт або 1 жосткий диск на день.
+Верифікація 40,000 ECDSA підписів в секунду видається ледь досяжною (https://bitcoin.stackexchange.com/questions/95339/how-many-bitcoin-transactions-can-be-verified-per-second), ноди навряд чи зможуть коли-небудь синхронізувати блокчейн. 
 ====
 
-=== What is the Lightning Network?
+А що, коли кожній ноді не потрібно було б знати і перевіряти кожну окрему транзакцію? Чи існує спосіб використовувати здатні до масштабування off-chain (поза блокчейном) транзакції без загрози безпеки для мережі Біткоїн?
 
-The Lightning Network is a network that operates as a "second layer" protocol on top of Bitcoin and other blockchains. The Lightning Network enables fast, secure, private, trustless, and permissionless payments. Here are some of the features of the Lightning Network:
+У лютому 2015 Джозеф Пун і Тадеуш Дрейя запропонували можливе вирішення Проблеми Масштабування Біткоїна в свої роботі _"The Bitcoin Lightning Network: Scalable Off-Chain Instant Payments" ("Блискавична Мережа Біткоїна: Масштабовані Off-Chain Миттєві Платежі")_ footnote:[Joseph Poon, Thaddeus Dryja - "The Bitcoin Lightning Network:
+Scalable Off-Chain Instant Payments" (https://lightning.network/lightning-network-paper.pdf).]. На той час Visa обробляла 47,000 транзакцій на секунду, Пун і Дрейя у своєму вайтпейпері оцінили, що для такого навантаження Біткоїну потрібно мати блоки розміром у 8 ГБ. Це зробило би утримання ноди досяжним тільки для великих підприємств і промисловості. У кінцевому підсумку лише кілька користувачів були б здатні верифікувати блокчейн, а це руйнує модель довіри до Біткоїна.
 
- * Users of the Lightning Network can route payments to each other for low cost and in real time.
- * Users who exchange value over the Lightning Network do not need to wait for block confirmations for payments.
- * Once a payment on the Lightning Network has completed, usually within a few seconds, it is final and cannot be reversed. Like a Bitcoin transaction, a payment on the Lightning Network can only be refunded by the recipient.
- * While "on-chain" Bitcoin transactions are broadcast and verified by all nodes in the network, payments routed on the Lightning Network are transmitted between pairs of nodes and are not visible to everyone, resulting in much greater privacy. 
- * Unlike transactions on the Bitcoin Network, payments routed on the Lightning Network do not need to be stored permanently. Lightning thus uses fewer resources, hence it is cheaper. This property also has benefits for privacy. 
- * The Lightning Network uses onion routing, similar to the protocol used by The Onion Router (TOR) privacy network, so that even the nodes involved in routing a payment are only directly aware of their predecessor and successor in the payment route.
+Lightning Network пропонує нову мережу, "другий рівень", на якому користувачі можуть здійснювати платежі один одному peer-to-peer, без необхідності публікувати окрему транзакцію в блокчейні Біткоїна на кожний окремий платіж.
+Користувачі можуть платити один одному всередині Lightning Network будь-яку кількість разів, використовуючи блокчейн Біткоїна тільки для того, щоб завантажити біткоїни у Lightning Network і щоб їх звідти забрати.
+В результаті більшість платежів можуть виконуватись поза блокчейном, і лише 2 транзакції - початкова для завантаження біткойнів і кінцева для їх виведення - мають бути оброблені Біткоїн-нодами.
+Окрім зменшення навантаження на ноди, платежі в Lightning Network будуть дешевшими для користувачів, оскільки їм не буде треба платити комісію за розміщення платежів у блокчейні Біткоїна. Також платежі будуть більш приватними, оскільки вони не публікуються на всю мережу і навіть не потребують постійного зберігання.
+
+Хоча Lightning Network була придумана для Біткоїна, вона може бути реалізована на будь-якому блокчейні, що відповідає її технічним вимогам.
+
+=== Основні Поняття Lightning Network
+
+Починаючи вивчення Lightning Network, ми зіткнемося з деякими технічними термінами, які спочатку можуть заплутати і можуть бути трохи важкими для розуміння. Незважаючи на те, що всі ці поняття та терміни мають визначення у глосарії і будуть детально пояснені по мірі проходження книги, для початку нам потрібні деякі основні роз’яснення. Ось деякі поняття, з якими ви зустрінетесь у перших двох главах цієї книги:
+
+Нода:: Комп'ютер-учасник мережі. Lightning-нода - комп'ютер, що бере участь у Lightning Network. Біткоїн-нода - комп'ютер, що бере участь у мережі Біткоїн. Зазвичай користувач Lightning Network має Lightning-ноду та Біткоїн-ноду.
+
+Блокчейн:: Розподілена книга транзакцій, що створюється мережею комп'ютерів. Біткоїн, наприклад, це система що створює блокчейн. Lightning Network не є блокчейном і не створює блокчейн. Це мережа, яка покладається на існуючий зовні блокчейн задля власної безпеки.
+
+Транзакція:: Структура даних, яка фіксує передачу управління над деякими коштами (наприклад, деякими біткойнами). Lightning Network покладається на Біткоїн-транзакції (або транзакції іншого блокчейну) для відстеження контролю над коштами.
+
+Платіж:: Коли обмін цінностями здійснюється в Lightning Network, ми називаємо це платежем, оскільки термін Транзакція є технічним терміном для записів у Біткоїн-блокчейні.
+
+Платіжний Канал:: _Фінансові відносини_ між двома нодами Lightning Network, як правило, реалізовані мульти-підписними Біткоїн-транзакціями, що ділять контроль над біткоїнами між двома Lightning-нодами.
+
+On-Chain і Off-Chain:: Платіж є "on-chain", якщо він записаний у вигляді транзакції у блокчейні Біткоїна (або іншого блокчейна). Платежі, відправлені через платіжні канали між Lightning-нодами, які не відображаються у блокчейні, називаються "off-chain" платежами.
+
+Більш детальне визначення цих та багатьох інших термінів можна знайти в <<глосарій>>. У цій книзі ми пояснимо, що означають ці поняття і як власне працюють ці технології.
+
+[Порада]
+====
+У цій книзі ви зустрінете слово "Біткоїн" з великої літери, воно означає _Систему Біткоїн_ і є власним іменником. Ви також зустрінете "біткойн" з маленької літери _б_, це означає одиницю валюти.
+====
+
+=== Що таке Lightning Network?
+
+Lightning Network - це мережа, що працює в якості протоколу "другого рівня" поверх Біткоїна та інших блокчейнів. Lightning Network дозволяє здійснювати швидкі, безпечні, приватні, не потребуючі довіри та дозволу платежі. Деякі особливості Lightning Network:
+
+ * Користувачі Lightning Network можуть відправляти платежі один одному дешево і в реальному часі.
+ * Користувачі Lightning Network при здійсненні платежів не повинні чекати підтвердження блоків.
+ * Як тільки платіж у Lightning Network був здійснений (зазвичай протягом кількох секунд), він є остаточним і не може бути скасованим. Як і у випадку з Біткоїн-транзакціями, лише одержувач може повернути платіж у Lightning Network.
+ * В той час, як "on-chain" Біткоїн-транзакції транслюються на всю мережу і перевіряються всіми нодами в мережі, платежі що маршрутизуються через Lightning Network, передаються між парами нод і невидимі для інших учасників, що підвищує приватність.
+ * На відміну від мережі Біткоїн, платежі що маршрутизуються через Lightning Network, не потребують постійного зберігання. Lightning Network використовує менше ресурсів, а отже є дешевшою. Ця властивість також надає переваги щодо приватності.
+ * Lightning Network використовує цибульну маршрутизацію (onion routing) подібно до протоколу, що використовується мережею The Onion Router (TOR). Тому навіть ноди, що беруть участь у маршрутизації платежу, знають лише своїх безпосередніх попередника та наступника в маршруті платежа.
 
 [[user-stories]]
-=== Lightning Network Use Cases, Users, and Their Stories
+=== Приклади Використання, Користувачі та Їх Історії
 
-As an electronic cash system, Bitcoin preserves the three most important properties of money (medium of exchange, store of value, and unit of account). Other relevant properties of digital payment systems include the ability of third parties to use them as a method of control and/or a tool of surveillance.
-The invention of money (and in particular Bitcoin) was primarily made to facilitate trade and enable the exchange of value between people. However, without the Lightning Network (or another second layer or scaling solution), it would be infeasible for millions of people to concurrently use Bitcoin as a medium of exchange because the network itself would become overloaded, slow, and costly.
+Як система електронної готівки, Біткоїн зберігає три найважливіші властивості грошей (засіб обміну, засіб заощадження та одиниця обліку). Інші релевантні властивості систем цифрових платежів включають можливість третіх сторон використовувати їх в якості способу контроля і/або інструменту спостереження.
+Гроші (і зокрема Біткоїн) було винайдено для спрощення торгівлі і забезпечення обміну цінностями між людьми. Однак без Lightning Network (або іншого рішення другого рівня для масштабування), було б неможливо одночасно використовувати Біткоїн як засіб обміну, оскільки сама мережа стала б перевантаженою, повільною та дорогою.
 
-To date, Bitcoin is the longest running, most secure cryptocurrency or electronic cash system and many people believe it represents the most stable store of value of all of the current cryptocurrencies. The Lightning Network allows people to send and receive bitcoin, without the overhead associated with on-chain transactions. This might seem confusing at first. You might be wondering how can the Lightning Network actually achieve this? While we could explain the network in computer science terms, it will be much easier to understand if we examine it from the perspective of people using it. In our examples, some of the people have already used Bitcoin and others are completely new to the Bitcoin network. Each of the people and their stories, as listed here, illustrates one or more specific use cases. We'll be revisiting them throughout this book:
+На сьогоднішній день Біткоїн - це найдовше працююча, найбезпечніша криптовалюта або система електронної готівки. Багато людей вважають, що Біткоїн є найбільш стабільним засобом заощадження з усіх існуючих криптовалют. Lightning Network дозволяє людям надсилати та отримувати біткойни без накладних витрат, пов’язаних з on-chain транзакціями. Спочатку це може здатися заплутаним. Можливо, вам цікаво, як Lightning Network насправді цього досягає? Ми могли б пояснити це у термінах інформатики, але набагато легше буде зрозуміти, якщо подивитись з точки зору користувачів. У наших прикладах деякі люди вже використовували Біткоїн, а інші є новачками. Кожна із перелічених історій, ілюструє один або декілька конкретних прикладів використання. У цій книзі ми будемо розглядати такі історії:
 
-consumer::
-Alice is a Bitcoin user who wants to make fast, secure, cheap, and private payments for small retail purchases. She buys coffee with bitcoin, using the Lightning Network.
+споживач::
+Аліса - користувачка Біткоїна, яка хоче здійснювати швидкі, безпечні, дешеві та приватні платежі за невеликі роздрібні покупки. Вона купує каву за біткоїни, використовуючи Lightning Network.
 
-merchant::
-Bob owns a coffee shop, "Bob's Cafe". "On-chain" bitcoin payments don't scale for small amounts like a cup of coffee, so he uses the Lightning Network to accept bitcoin payments almost instantaneously and for low fees.
+продавець::
+Боб володіє кав'ярнею "Кафе Боба". "On-chain" біткойн-платежі не масштабуються на такі маленькі суми, як ціна чашки кави, тому Боб використовує Lightning Network, щоб приймати біткойн-платежі майже миттєво і сплачуючи малу комісію.
 
-web designer::
-Saanvi is a web designer and developer in Bangalore, India. She accepts bitcoin for her work, but would prefer to get paid more frequently and so uses the Lightning Network to get paid incrementally for each small milestone she completes. With the Lightning Network, she can do more small jobs for more clients without worrying about fees or delays.
+веб-дизайнер::
+Саанві - веб-дизайнерка та розробник в Бангалорі, Індія. Вона приймає біткойни за свою роботу, але бажає отримувати зарплату частіше, і тому використовує Lightning Network, щоб отримувати поступові виплати за кожний невеликий виконаний етап роботи. За допомогою Lightning Network вона може виконувати більше дрібних робіт для більшої кількості клієнтів, не турбуючись про комісії та затримки.
 
-content creator / curator::
-John is a 9-year-old boy from New Zealand, who wanted a games console just like his friends. However, his dad told him that in order to buy it, he had to earn the money himself. Now John is an aspiring artist, so he knows that while he is still improving, he can't charge much for his artwork. After learning about Bitcoin, he managed to set up a website to sell his drawings across the internet. By using the Lightning Network, John was able to charge as little as $1 for one of his drawings, which would normally be considered a micro-payment and, as such, not possible with other payment methods. Furthermore, by using a global currency such as bitcoin, John was able to sell his artwork to customers all over the world and, in the end, buy the games console he so desperately wanted.
+створювач контенту::
+Джон - 9-річний хлопчик з Нової Зеландії, який хотів ігрову приставку, як у його друзів. Однак тато сказав йому, що для того, щоб її придбати, він повинен сам заробити гроші. Зараз Джон - художник-початківець, тому він знає, що поки він ще вдосконалюється, він не може багато брати за свої роботи. Дізнавшись про Біткоїн, йому вдалося створити веб-сайт для продажу своїх малюнків через Інтернет. Використовуючи Lightning Network, Джон має можливість приймати в оплату 1 долар за малюнок, що зазвичай вважалось мікроплатежем, і було неможливо виконати через інші методи оплати. Крім того, використовуючи світову валюту, таку як біткойн, Джон зміг продати свої твори мистецтва клієнтам у всьому світі і, врешті-решт, придбати ігрову консоль, яку він так відчайдушно бажав.
 
-gamer::
-Gloria is a teenage gamer from the Philippines. She plays many different computer games, but her favorite ones are those that have an "in-game economy" based on real money. As she plays games, she also earns money by acquiring and selling virtual in-game items. The Lightning Network allows her to transact in small amounts for in-game items as well as earn small amounts for completing quests.
+геймер::
+Глорія - підлітковий геймер з Філіппін. Вона грає в безліч різних комп’ютерних ігор, але її улюбленими є ті, що мають «внутрішньоігрову економіку», засновану на реальних грошах. Граючи в ігри, вона також заробляє гроші, купуючи та продаючи віртуальні ігрові предмети. Lightning Network дозволяє їй здійснювати транзакції на невеликі суми для придбання ігрових предметів, а також заробляти невеликі кошти за виконання квестів.
 
-migrant::
-Farel is an immigrant who works in the Middle East and sends money home to his family in Indonesia. Remittance companies and banks charge high fees, and Farel prefers to send smaller amounts more often. Using the Lightning Network, Farel can send bitcoin as often as he wants, with negligible fees.
+мігрант::
+Фарел - іммігрант, який працює на Близькому Сході і відправляє гроші додому своїй родині в Індонезію. Грошові перекази та банки беруть високі комісії, а Фарел бажає часто відправляти невеликі суми. Використовуючи Lightning Network, Фарел може відправляти біткойни з будь-якою частотою та із незначними комісіями.
 
-software service business::
-Wei is an entrepreneur who sells information services related to the Lightning Network, as well as Bitcoin and other cryptocurrencies. Wei is monetizing his API endpoints by implementing micro-payments over the Lightning Network. Additionally, Wei has implemented a liquidity provider service that rents inbound channel capacity on the Lightning Network, charging a small bitcoin fee for each rental period.
+софт як сервіс::
+Вей - підприємець, який надає інформаційні послуги, пов’язані з Lightning Network, а також з Біткоїном та іншими криптовалютвами. Вей монетизує доступ до свого API через мікроплатежами в Lightning Network. Додатково, Вей виконує роль постачальника ліквідності, надаючи в оренду вхідну спроможність платіжного каналу в Lightning Network, стягуючи невелику плату за кожен період оренди.
 
-=== Chapter Summary
+=== Підсумок Глави
 
-In this chapter we looked at the history of the Lightning Network and the motivations behind second layer scaling solutions for Bitcoin and other blockchain based networks. We learned basic terminology including node, payment channel, on-chain transactions, and off-chain payments. Finally, we met Alice, Bob, Saanvi, John, Gloria, Farel, and Wei who we'll be following throughout the rest of the book. In the next chapter we'll meet Alice and walk through her thought process as she selects a Lightning wallet and prepares to make her first Lightning payment to buy a cup of coffee from Bob's Cafe.
+У цій главі ми розглянули історію Lightning Network та мотивації, що стоять за рішеннями другого рівня щодо масштабування Біткоїна та інших блокчейн-систем. Ми вивчили базові терміни - нода, платіжний канал,  on-chain та off-chain транзакції. Нарешті, ми зустріли Алісу, Боба, Саанві, Джона, Глорію, Фарела та Вей, за якими будемо стежити впродовж решти книги. У наступному розділі ми познайомимося з Алісою та прослідкуємо за її думкою, коли вона обирає Lightning-гаманець та готується зробити свій перший Lightning-платіж, щоб придбати чашку кави в Кафе Боба.
