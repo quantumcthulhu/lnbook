@@ -1,116 +1,116 @@
 [[getting-started]]
-== Getting Started
+== Починаємо
 
-In this chapter, we will begin where most people start when encountering the Lightning Network for the first time - choosing software to participate in the Lightning Network economy. We will examine the choices of two users who represent a common use-case for the Lightning Network and learn by example. Alice, a coffee shop customer, will be using a Lightning wallet on her mobile device to buy coffee from Bob's Cafe. Bob, a merchant, will be using a Lightning node and wallet to run a point-of-sale system at his cafe, so he can accept payments over the Lightning Network.
+У цьому розділі ми почнемо з того, з чого починають більшість людей, коли вперше стикаються з Lightning Network - із вибору програмного забезпечення для участі в економіці Lightning Network. Ми розглянемо вибір двох користувачів, які представляють загальний випадок використання Lightning Network, і навчимось на їх прикладах. Клієнтка кав'ярні Аліса використовуватиме Lightning-гаманець на своєму мобільному пристрої, щоб купувати каву в кафе Боба. Торговець Боб буде використовувати Lightning-ноду і гаманець для отримання платежів у своєму кафе через Lightning Network.
 
-=== Lightning Nodes
+=== Lightning-ноди
 
-The Lightning Network is accessed via software applications that can speak the Lightning Network protocol. A _Lightning Network Node_ (or simply "node") is a software application that has three important characteristics. First, nodes must communicate on a peer-to-peer basis with other Lightning nodes creating the network. Nodes also include "wallet" functionality, so they can send and receive payments over the Lightning Network as well as on the Bitcoin network. Finally, Lightning nodes also need access to the Bitcoin blockchain (or other blockchains for other cryptocurrencies) to secure the funds used for payments.
+Доступ до Lightning Network здійснюється за допомогою програм, які вміють спілкуватися через протокол Lightning Network. _Нода Lightning Network_ (або просто "нода") - це програмний застосунок, що має три важливі характеристики. По-перше, ноди повинні взаємодіяти peer-to-peer з іншими Lightning-нодами, утворюючи мережу. Також ноди мають функціональність "гаманця", тобто вони можуть надсилати та отримувати платежі через Lightning Network, як гаманці у мережі Біткоїн. Нарешті, Lightning-нодам потрібен доступ до блокчейну Біткоїна (або інших блокчейнів для інших криптовалют) для гарантування безпеки коштів, які беруть участь в платежах.
 
-Users have the highest degree of control by running their own Bitcoin node and Lightning node. However, Lightning nodes can also use a lightweight Bitcoin client (commonly referred to as Simplified Payment Verification (SPV)) to interact with the Bitcoin blockchain.
+Користувачі мають найвищий рівень контролю, коли використовують власні  Біткоїн- та Lightning- ноди. Також Lightning-ноди можуть використовувати для взаємодії з Біткоїн-блокчейном полегшену Біткоїн-ноду, що відома як Simplified Payment Verification (Спрощена Верифікація Платежів, SPV).
 
-=== Lightning Explorer
+=== Lightning-експлорер
 
-A Lightning network explorer is an useful tool to show the statistics of nodes, channels and network capacity.
+Експлорер (Провідник, Explorer) Lightning Network - це корисний інструмент для відображення статистики нод, каналів та об'єму мережі.
 
-The below is an inexhaustive list (in alphanumerical order):
+Нижче наведено невичерпний перелік (в алфавітно-цифровому порядку):
 
-* https://1ml.com/, 1ML Lightning explorer
-* https://explorer.acinq.co/, ACINQ's Lightning explorer, with fancy visualization
-* https://lightblock.me/, Lightblock Lightning explorer
-* https://hashxp.org/lightning/node/, hashXP Lightning explorer
+* https://1ml.com/, 1ML Lightning-експлорер
+* https://explorer.acinq.co/, Lightning-експлорер від ACINQ з гарною візуалізацією 
+* https://lightblock.me/, Lightblock Lightning-експлорер
+* https://hashxp.org/lightning/node/, hashXP Lightning-експлорер
 
 [TIP]
 ====
-Note that if using Lightning explorers, just like in existing block explorers,
-the privacy can be a concern because, if users are careless, the website may track their IP addresses and collect their behavior records (for example, the nodes users are interested in).
+Зверніть увагу, що при використанні Lightning-експлорерів, як і випадку з блокчейн-експлорерами,
+конфіденційність користувачів може постраждати, так як веб-сайт може відстежувати їхні IP-адреси та збирати інформацію про поведінку користувачів (наприклад, ноди, якими вони цікавились).
 
-Also what should be noted is that, as there is no global consensus of the current Lightning graph, nor the current state of any existing channel policy, users should never rely on Lightning explorers to retrieve the most updated information. That is, Lightning explorers should only be used to gather loosely statistics of Lightning Network.
+Також варто зазначити, що, оскільки не існує глобального консенсусу ані щодо поточного графу Lightning, ані щодо поточного стану будь-якої існуючої політики каналів, користувачі ніколи не повинні покладатися на Lightning-експлорери для отримання актуальної інформації. Lightning-експлорери слід використовувати лише для збору широкої статистики Lightning Network.
 ====
 
-=== Lightning Wallets
+=== Lightning-гаманці
 
-The term "Lightning Wallet" is somewhat ambiguous, as it can describe a broad variety of components combined with some user interface. The most common components of lightning wallet software include:
+Термін "Lightning-гаманець" є дещо неоднозначним, оскільки він може описувати широкий спектр компонентів у поєднанні з інтерфейсом користувача. До найпоширеніших складових частин Lightning-гаманця належать:
 
-* A keystore that holds secrets, such as private keys.
-* A Lightning Network node (Lightning node) that communicates on the Peer-to-Peer network, as described previously.
-* A Bitcoin node that stores blockchain data and communicates with other Bitcoin nodes.
-* A database "map" of nodes and channels that are announced on the Lightning network.
-* A "gossip" participant that learns about nodes and channels on the network to construct the "map" of the network.
-* A channel data store containing state about channels on the Lightning Network as well as signatures to settle them.
-* A channel manager that can open and close Lightning Network channels.
-* A path-finding system that can identify a path of connected channels from payment source to payment destination.
+* Сховище ключів для зберігання секретних ключів.
+* Lightning-нода, що спілкується через peer-to-peer мережу, як було описано вище.
+* Біткоїн-нода, що зберігає блокчейн та спілкується з іншими Біткоїн-нодами.
+* "Карта" нод і каналів, що анонсовані у Lightning Network.
+* "Пліткар", який збирає інформацію про ноди і канали в мережі для побудови "мапи" мережі.
+* Сховище для зберігання інформації про відкриті канали.
+* Менеджер каналів, який може відкривати та закривати канали.
+* Система пошуку маршруту з'єднаних каналів від джерела платежу до призначення платежу.
 
-A Lightning wallet may contain all of these functions, acting as a "full" wallet, with no reliance on any third-party services. Or, one or more of these components may rely (partially or entirely) on third-party services that mediate those functions.
+Lightning-гаманець може виконувати всі ці функції, будучи "повним" гаманцем, незалежним від сторонніх сервісів. Або одна чи кілька з перерахованих функцій може повністю або частково перекладатися на сторонні сервіси.
 
-A key distinction (pun intended) is whether the keystore function is internal or outsourced. In blockchains, control of keys determines custody of funds, as memorialized by the phrase "your keys, your coins; not your keys, not your coins". Any wallet that outsources management of keys is called a "custodial" wallet because a third party acting as custodian has control of the user's funds, not the user himself. A "non-custodial" or "self-custody" wallet, by comparison, is one where the keystore is part of the wallet, and keys are controlled directly by the user.  The term "non-custodial" wallet just implies that the keystore is local and under the user's control. However, one or more of the other wallet components might or might not be outsourced and rely on some trusted third parties even if some of the components (other than the keystore) rely on some trusted third parties.
+Ключова відмінність (гра слів) полягає в тому, виконує гаманець функцію зберігання ключів чи покладає її на сторонній сервіс. В блокчейнах контроль над ключами визначає контроль над монетами, що виражається у вислові "твої ключі - твої монети; не твої ключі - не твої монети". Всякий гаманець, який передає управління ключами на аутсорсинг, називається "кастодіальним" (від англ. "custody" - "зберігання", "охорона"), оскільки сторона, яка зберігає ключі, контролює кошти користувача, а не сам користувач. Відповідно, "некастодіальним" є такий гаманець, що самостійно виконує функцію зберігання ключів, і ключі контролюються лише користувачем. Термін "некастодіальний" гаманець просто означає, що сховище ключів є локальним і знаходиться під контролем користувача. При цьому один або більше функцій гаманця (крім сховища ключів) можуть бути передані довіренним стороннім сервісам.
 
-Blockchains, especially open blockchains like Bitcoin, attempt to minimize or eliminate trust in third parties and empower users. This is often called a "trustless" model, though "trust-minimized" is a better term. In such systems, the user trusts the software rules, not third parties. Therefore, the issue of control over keys is a principal consideration when choosing a Lightning wallet.
+Блокчейни, особливо відкриті блокчейни, такі як Біткоїн, намагаються мінімізувати або взагалі усунути необхідність довіри до третіх сторін і передати повноваження самим користувачам. Цю модель часто називають "trustless" (без довіри), хоча більш підходящим словосполученням є "модель з мінімізованою довірою". В таких системах користувач довіряє правилам програмного забезпечення замість довіри до третіх осіб. Таким чином питання контролю над ключами є головним фактором при виборі Lightning-гаманця.
 
-Every other component of a Lightning wallet brings similar considerations of trust. If all the components are under the control of the user, then the amount of trust in third parties is minimized, bringing maximum power to the user. Of course, this brings a direct trade-off, as with that power comes the corresponding responsibility to manage complex software.
+Кожен інший компонент Lightning-гаманця викликає подібні міркування щодо довіри. Якщо всі компоненти перебувають під контролем користувача, тоді довіра до третіх сторін зводиться до мінімуму, забезпечуючи максимальну владу користувача. Звісно, разом із такою владою виникає відповідальність користувача за управління складним програмним забезпеченням.
 
-Every user must consider their own technical skills before deciding what type of Lightning wallet to use. Those with strong technical skills should use a Lightning wallet that puts all of the components under the direct control of the user. Those with fewer technical skills but a desire to control their funds, should choose a _non-custodial_ Lightning wallet.
-Often the trust in those cases relates to privacy.
-If users decide to outsource some functionality to a third party they usually give up some privacy as the third party will learn some information about them.
+Кожен користувач повинен враховувати власні технічні навички, перш ніж вирішити, який тип гаманця використовувати. Тим, хто має сильні технічні навички, слід користуватись гаманцем Lightning, який передає всі функції під безпосередній контроль користувача. Тим, у кого менше технічних навичок, але є бажання контролювати свої кошти, слід обрати _некастодіальний_ Lightning-гаманець.
+Часто довіра у цих випадках стосується конфіденційності.
+Коли користувачі вирішують передати деякі функції третій стороні, то вони, як правило, частково втрачають конфіденційність, оскільки третя сторона дізнається деяку інформацію про них.
 
-Finally, those seeking simplicity and convenience, even at the expense of control and security, may choose a custodial Lightning wallet. This is the least technically challenging option, but it _undermines the trust model of cryptocurrency_ and should therefore be considered only as a stepping stone towards more control and self-reliance.
+Нарешті, ті, хто прагне простоти та зручності, навіть за рахунок контролю та безпеки, можуть вибрати кастодіальний Lightning-гаманець. Це найпростіший варіант, але він _підриває модель довіри криптовалюти_ і, отже, його слід розглядати лише як сходинку до більшого контролю та незалежності.
 
-There are many ways wallets can be characterized or categorized.
-The most important questions to ask about a specific wallet are:
+Існує багато способів охарактеризувати або класифікувати гаманці.
+Найважливішими є такі питання:
 
-- Does this Lightning wallet have a full Lightning Node or does it use a third-party Lightning Node?
-- Does this Lightning wallet have a full Bitcoin Node or does it use a third-party Bitcoin Node? footnote:[If a Lightning wallet uses a third-party Lightning node, it is this third-party Lightning node who decides how to communicate with Bitcoin. Hence, using a third-party Lightning node implies that you as a wallet user also use a third-party Bitcoin node. Only in the other case, when the Lightning wallet uses its own Lightning node, does the choice "full Bitcoin-node" vs. "third-party Bitcoin node" exist. ]
-- Does this Lightning wallet store its own keys under user control (self-custody) or are the keys held by a third-party custodian?
+- Цей Lightning-гаманець утримує свою повну Lightning-ноду чи він використовує сторонню Lightning-ноду?
+- Цей Lightning-гаманець утримує свою повну Біткоїн-ноду чи він використовує сторонню Біткоїн-ноду? footnote:[Якщо Lightning-гаманець використовує сторонню Lightning-ноду, то ця стороння Lightning-нода вирішує, як їй спілкуватися з мережею Біткоїн. Отже, використання сторонньої Lightning-ноди автоматично означає використання і сторонньої Біткоїн-ноди. Лише в протилежному випадку - коли Lightning-гаманець використовує власну Lightning-ноду - існує вибір "власна Біткоїн-нода" чи "стороння Біткоїн-нода". ]
+- Цей Lightning-гаманець зберігає ключі під контролем користувача, або ключі зберігаються у стороннього кастодіала?
 
-At the highest level of abstraction, questions 1 and 3 are the most elementary ones.
-From these two questions, we can derive four possible categories.
-We can place these four categories into a quadrant as seen in Table <<lnwallet-categories>>.
-But remember that this is just one way of categorizing Lightning wallets.
+На найвищому рівні абстракції питання 1 і 3 є найбільш елементарними.
+З цих двох питань ми можемо вивести чотири можливі категорії.
+Ми можемо розмістити ці чотири категорії в квадранті, як показано в Таблиці <<lnwallet-categories>>.
+Але пам’ятайте, що це лише один із способів класифікувати Lightning-гаманці.
 
 [[lnwallet-categories]]
-.Lightning Wallets Quadrant
+.Квадрант Lightning-гаманців
 [options="header"]
 |===
-|                        | *Full Lightning Node*      | *3rd-party Lightning Node*
-| *Self-Custody*         | Q1: High technical skill, least trust in 3rd parties, most permissionless | Q2: Below medium technical skills, below medium trust in 3rd parties, requires some permissions
-| *Custodial*            | Q3: Above medium technical skills, above medium trust in 3rd parties, requires some permissions | Q4: Low technical skills, high trust in 3rd parties, least permissionless
+|                        | *Повна Lightning-нода*      | *Стороння Lightning-нода*
+| *Некастодіальний*         | Q1: Сильні технічні навички, найменша довіра до третіх сторін, потребує найменше дозволів | Q2: Технічні навички нижче середнього, довіра до третіх сторін нижче середнього, потребує деяких дозволів
+| *Кастодіальний*            | Q3: Технічні навички вище середнього, довіра до третіх сторін вище середнього, потребує деяких дозволів | Q4: Слабкі технічні навички, найбільша довіра до третіх сторін, потребує найбільше дозволів
 |===
 
-Q3, quadrant 3, where a full Lightning node is used but the keys are held by a custodian is currently not common.
-Future wallets from that quadrant would let a user worry about the operational aspects of their node, but then delegate the access to the keys to a third party which may use primarily cold storage.
+Ситуація визначена у квадранті Q3, коли у гаманця є власна Lightning-нода, але ключі знаходяться у кастодіала, на данний момент не трапляється. 
+Майбутні гаманці із цього квадранта дозволять користувачеві турбуватися про операційні аспекти своєї ноди, але делегуватимуть доступ до ключів третій стороні, яка може використовувати переважно холодне зберігання ключів.
 
-Lightning wallets can be installed on a variety of devices, including laptops, servers, and mobile devices. To run a full Lightning node (one that participates in "gossip" and creates its own map of the network for path finding and routing) you will need to use a server or desktop computer, as mobile devices and laptops are usually not powerful enough in terms of capacity, processing, battery life, and connectivity.
+Lightning-гаманці можна встановити на різні пристрої, включаючи ноутбуки, сервери та мобільні пристрої. Щоб запустити повну Lightning-ноду (ту, що бере участь у "плітках" і створює власну карту мережі для пошуку та маршрутизації шляхів), вам потрібно буде використовувати сервер або настільний комп'ютер, оскільки мобільні пристрої та ноутбуки зазвичай недостатньо потужні в сенсі ємності, швидкості обробки, часу автономної роботи та підключення до мережі.
 
-The category "Third-party Lightning Nodes" can again be subdivided into:
+Категорія "Сторонні Lightning-ноди" може бути поділена на:
 
-- Lightweight: means that the Lightning Node is operated by a third party and that the wallet obtains the required information through an API that connects wallet and third-party Lightning node.
-- None: means that not only is the Lightning Node operated by a third party but most of the wallet is operated by a third party in the cloud such that the wallet does not even need to make calls on a Lightning node API.
+- Легкі: Lightning-нода управляється третьою стороною, гаманець отримує необхідну інформацію від сторонньої Lightning-ноди через API.
+- Ніякі: означає, що не тільки Lightning-нода управляється третьою стороною, але й більшою частиною гаманця керує третя сторона, розташована в клауді, так що гаманцю навіть не потрібно викликати API.
 
-These subcategories are used in Table <<lnwallet-examples>>.
+Ці підкатегорії використані в таблиці <<lnwallet-examples>>.
 
-Other terms that need explanation in Table <<lnwallet-examples>> in column "Bitcoin Node" are:
+Інші терміни, які потребують пояснення в Таблиці <<lnwallet-examples>> у стовпці "Біткоїн-нода":
 
-- Neutrino: Neutrino is a specific implementation of a protocol to get data from Bitcoin as outlined in BIP 157 and BIP 158. The Bitcoin Node is run by a third-party and accessed via "neutrino".
-- Electrum: This means the wallet connects to an Electrum Server. The Bitcoin Node is run by a third-party and accessed via the  "Electrum" protocol.
-- Bitcoin Core: implementation of Bitcoin full node
-- btcd: another implementation of Bitcoin full node
+- Neutrino: Neutrino - це специфічна реалізація протоколу для отримання даних з Біткоїн-мережі, згідно BIP 157 і BIP 158. Біткоїн-нода управляється третьою стороною і доступ до неї здійснюється за допомогою "neutrino".
+- Electrum: Це означає, що гаманець підключається до сервера Electrum. Біткойн-нода управляється третьою стороною і доступ до неї здійснюється за протоколом "Electrum".
+- Bitcoin Core: реалізація повної Біткоїн-ноди.
+- btcd: інша реалізація повної Біткоїн-ноди.
 
-In <<lnwallet-examples>> we see some examples of currently popular Lightning node and wallet applications for different types of devices.
+У <<lnwallet-examples>> ми бачимо кілька прикладів популярних на даний момент гаманців для різних типів пристроїв.
 
 // TODO: Add a lot more wallet/node examples, confirm the details for correctness
 [[lnwallet-examples]]
-.Examples of Popular Lightning Wallets
+.Приклади Популярних Lightning-гаманців
 [options="header"]
 |===
-| Application    | Device  | Lightning Node | Bitcoin Node          | Keystore
-| lnd            | Server  | Full Node   | Bitcoin Core/btcd     | Self-Custody
-| c-lightning    | Server  | Full Node   | Bitcoin Core          | Self-Custody
-| Eclair Server  | Server  | Full Node   | Bitcoin Core/Electrum | Self-Custody
-| Zap Desktop    | Desktop | Full Node   | Neutrino              | Self-Custody
-| Eclair Mobile  | Mobile  | Lightweight | Electrum              | Self-Custody
-| Breez Wallet   | Mobile  | Full Node   | Neutrino              | Self-Custody
-| Phoenix Wallet | Mobile  | Lightweight | Electrum              | Self-Custody
-| Blue Wallet    | Mobile  | None        | None                  | Custodial
+| Застосунок    | Пристрій  | Lightning-нода | Біткоїн-нода          | Сховище ключів
+| lnd            | Сервер  | Повна нода   | Bitcoin Core/btcd     | Некастодіальне
+| c-lightning    | Сервер  | Повна нода   | Bitcoin Core          | Некастодіальне
+| Eclair Server  | Сервер  | Повна нода   | Bitcoin Core/Electrum | Некастодіальне
+| Zap Desktop    | Настільний комп'ютер | Повна нода   | Neutrino              | Некастодіальне
+| Eclair Mobile  | Смартфон  | Легка нода | Electrum              | Некастодіальне
+| Breez Wallet   | Смартфон  | Повна нода   | Neutrino              | Некастодіальне
+| Phoenix Wallet | Смартфон  | Легка нода | Electrum              | Некастодіальне
+| Blue Wallet    | Смартфон  | Ніяка        | Ніяка                  | Кастодіальне
 |===
 
 === Balancing complexity and control
