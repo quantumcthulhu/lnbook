@@ -1,85 +1,84 @@
 [role="pagenumrestart"]
 [[ch03_How_Lightning_Works]]
-== How the Lightning Network Works
+== Як Працює Lightning Network
 
-Now that we've followed Alice as she set up a Lightning Wallet and purchased a coffee from Bob, we'll look under the hood and unpack the different components of the Lightning Network involved in that process.
-This chapter will give a high-level overview and will not delve into all the technical details.
-The goal is rather to help you to become aware of the most important concepts and building blocks of the Lightning Network.
+Ми прослідкували за тим, як Аліса створила Lightning-гаманець і придбала каву у Боба, а тепер заглянемо під капот і роздивимось ближче різні компоненти Lightning Network, які приймали участь у цьому процесі.
+Мета цього розділу - допомогти усвідомити найважливіші концепції та будівельні блоки Lightning Network. Тому тут буде високорівневий огляд без вникнення у всі технічні деталі.
 
-If you have experience in computer science, cryptography, Bitcoin, and protocol development, then this chapter should be enough for you to be able to fill out the connecting details by yourself.
-If you are less experienced, this chapter shall give you a good enough overview so you will have an easier time understanding the formal protocol specifications, known as BOLTs (Basis of Lightning Technology).
-In case you are a beginner, this chapter will help you better understand the technical chapters of the book.
+Якщо у вас є досвід в галузі інформатики, криптографії, Біткоїна та розробки протоколів, то цієї глави має бути достатньо для того, щоб ви могли самостійно з'єднати деталі між собою.
+Якщо ви менш досвідчені, то цей розділ дасть вам достатньо хороше загальне уявлення для більш легкого розуміння офіційних специфікацій протоколу, що відомі як BOLT (Basis of Lightning Technology, Основи Lightning Network).
+Якщо ви новачок, ця глава допоможе вам краще зрозуміти технічні розділи книги.
 
-We'll start with a one sentence definition of what the Lightning Network (LN) is and break it down in the remainder of this chapter.
+Почнемо з визначення того, що таке Lightning Network (LN), і розберемо його у подальшій частині цього розділу.
 
-**The Lightning Network (LN) is a peer-to-peer network of _payment channels_ implemented as smart contracts on the _Bitcoin blockchain_ as well as a communication protocol that defines how participants set up and execute these smart contracts**
+**Lightning Network (LN) - це однорангова (peer-to-peer) мережа _платіжних каналів_, реалізована у вигляді смарт-контрактів на _блокчейні Біткоїн_, а також комунікаційний протокол, що визначає, як учасники створюють та виконують ці смарт-контракти**
 
-=== Payment channels basics
+=== Основи платіжних каналів
 
-We will see that a payment channel is simply a 2-of-2 multisignature address on Bitcoin, for which you hold one key and your channel partner holds the other key.
-You and your channel partner negotiate a sequence of transactions that spend from this multisignature address. Instead of transmitting and recording these transactions on the Bitcoin blockchain, you both hold on to them, unspent.
-The latest transaction in that sequence encodes the balance of the channel and defines how that balance is divided between you and your channel partner.
-Thus, adding a new transaction to this sequence is equivalent to moving some part of the channel balance from one channel partner to the other, without the Bitcoin network being aware of it. As you negotiate each new transaction, changing the allocation of funds in the channel, you also revoke the previous transaction, so that neither party can regress to a previous state.
-Each transaction in the sequence makes use of Bitcoin's scripting language, and thus the negotiation of funds between you and your channel partner is managed by a Bitcoin smart contract.
-The smart contract is set up to penalize a channel member if they try to submit a previously revoked state of the channel.
+Ми побачимо, що платіжний канал - це просто 2-із-2 мультисиг адреса, один ключ якої контролюєти ви, а інший ключ - ваш партнер по каналу.
+Ви та ваш партнер по каналу домовляєтеся про послідовність транзакцій, які витрачають кошти з цієї адреси. Замість того, щоб передавати в мережу та записувати ці транзакції блокчейн, ви обидва тримаєте їх у себе.
+Остання транзакція в цій послідовності визначає, як саме баланс коштів у каналі розподіляється між вами та вашим партнером по каналу.
+Таким чином, додавання нової транзакції до цієї послідовності рівнозначно переказу частини балансу від одного партнера каналу до іншого без інформування мережі Біткоїн про цю подію. Узгоджучи кожну нову транзакцію і змінюючи розподіл коштів у каналі, ви також відкликаєте попередню транзакцію, щоб жодна із сторін не могла повернутися до попереднього стану.
+Кожна транзакція в послідовності використовує мову Script Біткоїна, таким чином узгодження коштів між вами та вашим партнером по каналу управляється за допомогою смарт-контракту Біткоїн.
+Смарт-контракт передбачає покарання учасника каналу, який намагається опублікувати скасований раніше стан каналу.
 
 [NOTE]
 ====
-If you have an unpublished transaction from a 2-of-2 multisignature address, that pays you part of the balance, then a signature from the other party ensures that you can independently publish this transaction anytime by adding your own signature.
+Якщо у вас є неопублікована транзакція, що витрачає кошти з 2-із-2 мультисиг адреси і виплачує частину залишку вам, то наявність підпису іншої сторони гарантує вам можливість будь-коли самостійно опублікувати цю транзакцію, додавши власний підпис.
 
-The ability to hold a partially-signed transaction, offline and unpublished, with the option to publish and own that balance at any time, is the basis of the Lightning Network.
+Можливість утримання частково підписаної транзакції з можливістю опублікувати її та заволодіти балансом у будь-який час, є основою Lightning Network.
 ====
 
-=== Routing payments across channels
+=== Маршрутизація платежів через канали
 
-Once several participants have channels from one party to another, a payment can also be "forwarded" from payment channel to payment channel, by setting up a _path_ across the network connecting several payment channels together.
+Якщо кілька учасників мають канали від одного до іншого, платіж також може бути "перенаправлений" з одного платіжного каналу на інший шляхом встановлення _шляху_ через мережу, з'єднуючого послідовність платіжних каналів.
 
-For example, Alice can send money to Charlie if Alice has a channel with Bob and Bob has a channel with Charlie.
+Наприклад, Аліса може надіслати гроші Чарлі, якщо Аліса має канал з Бобом, і Боб має канал з Чарлі.
 
-By the design of the Lightning Network, it is possible to extend the smart contracts which operate the channel so that Bob has no way of stealing the funds that are being forwarded through his channels.
+За архітектурою Lightning Network, можливо запрограмувати смарт-контракти керуючі каналом у такий спосіб, що Боб не матиме можливості вкрасти кошти, що проходять далі через його канал.
 
-In the same way that the smart contract protects the channel partners, so they don't need to trust each other, the entire network protects the participants so that they can forward payments without trusting any of the other participants.
+Смарт-контракт захищає партнерів каналу так, що їм не потрібно довіряти один одному. Так само вся мережа захищає її учасників, щоб ті могли пересилати платежі, не маючи довіри до жодного з інших учасників.
 
-Since the channels are constructed from multisignature addresses and the balance update transactions are pre-signed Bitcoin transactions, all the trust that is needed to operate the Lightning Network comes from the trust in the decentralized Bitcoin network!
+Оскільки канали побудовані з мультисиг адрес, а транзакції оновлення балансу є попередньо підписаними Біткоїн-транзакціями, то вся довіра, необхідна для роботи Lightning Network, походить від довіри до децентралізованої мережі Біткоїн!
 
-The aforementioned innovations are certainly the major breakthrough that allowed the creation of the Lightning Network.
-However, the Lightning Network is so much more than the cryptographic protocols on top of the Bitcoin scripting language.
-It is a comprehensive communication protocol that allows peers to exchange Lightning messages to achieve the transfer of bitcoin.
-The communication protocol defines how Lightning messages are encrypted and exchanged.
+Вищезазначені інновації, безумовно, є головним проривом, який дозволив створити Lightning Network.
+Однак Lightning Network - це набагато більше, ніж криптографічні протоколи поверх мови Script Біткоїна.
+Це всеосяжний комунікаційний протокол, який дозволяє рівноправним учасникам мережі обмінюватися Lightning-повідомленнями, щоб пересилати біткоїни.
 
-The Lightning Network also uses a "gossip" protocol to distribute public information about the  channels (network topology) to all the participants.
+Lightning Network також використовує gossip-протокол (протокол "пліток") для розповсюдження серед усіх учасників публічної інформації про канали (про топологію мережі).
 
-Alice, for example, needs the network topology information to be aware of the channel between Bob and Charlie, so that she can construct a route to Charlie.
+Наприклад, Алісі потрібна інформація про топологію мережі, щоб взнати про канал між Бобом і Чарлі, щоб вона могла побудувати маршрут до Чарлі.
 
-Last but not least, it is important to understand that the Lightning Network is nothing more than an application on top of Bitcoin, using Bitcoin transactions and Bitcoin Script. There is no "Lightning coin" or "Lightning blockchain".
-Beyond all the technical primitives, the Lightning Network protocol is a creative way to get more benefits out of Bitcoin by allowing an arbitrary amount of instant payments with instant settlements without the necessity to trust anyone else but the Bitcoin network.
+І останнє, але не менш важливе: Lightning Network - це не що інше, як додаток поверх Біткоїна, що використовує біткойн-транзакції та мову Script. Не існує "Lightning монети" або "Lightning блокчейна".
 
-=== Payment channels
+Поза технічними примітивами, протокол Lightning Network - це креативний спосіб отримати більше переваг від використання Біткоїну за рахунок проведення довільної кількості миттєвих платежів без необхідності довіряти комусь іншому, крім мережі Біткоїн.
 
-As we saw in the previous chapter, Alice used her wallet software to create a payment channel between her and another Lightning Network participant.
-From a computer science perspective, a payment channel is a cryptographic communication protocol between you and your channel partner.
-It allows the channel partners to send funds back and forth as often as they wish.
+=== Платіжні канали
 
-A channel is only limited by two things:
-First, the time it takes for the internet to transfer the few bytes of data that the protocol requires to move funds from one end of the channel to the other.
-Second, the capacity of the channel, meaning the amount of bitcoin that is committed to the channel when it is opened.
+Як ми бачили в попередньому розділі, Аліса використала свій гаманець для створення платіжного каналу між нею та іншим учасником Lightning Network.
+З точки зору інформатики платіжний канал - це криптографічний комунікаційний протокол між вами та вашим партнером по каналу.
+Це дозволяє партнерам по каналу надсилати кошти туди-сюди так часто, як їм заманеться.
 
-Payment channels have a few very interesting and useful properties:
+Канал обмежений лише двома речами:
+По-перше, час потрібний для передачі через Інтернет кількох байтів даних, необхідних для переміщення коштів з одного кінця каналу на інший.
+По-друге, пропускна здатність каналу, тобто сума біткоїнів, яка вноситься в канал при його відкритті.
 
-* Because the time to update a channel is primarily bound by the communication speed of the internet, making a payment on a payment channel is almost instant.
+Платіжні канали мають кілька дуже цікавих і корисних властивостей:
 
-* If the channel is open, making a payment does not require the confirmation of Bitcoin blocks. In fact - as long as you and your channel partner follow the protocol - it does not require any interaction with the Bitcoin network or anyone else other than your channel partner.
+* Оскільки час оновлення стану каналу в першу чергу пов’язаний зі швидкістю передачі даних через Інтернет, здійснення платежу через платіжний канал відбувається майже миттєво.
 
-* The cryptographic protocol is constructed such that there is little to no trust needed between you and your channel partner. If your partner becomes unresponsive or tries to cheat you, you can ask the Bitcoin system to act as a "court" resolving the smart contract you and your partner have previously agreed upon.
+* Якщо канал відкритий, здійснення платежу не вимагає підтвердження блоків Біткоїн. Насправді - доки ви та ваш партнер по каналу дотримуєтесь протоколу - він не вимагає жодної взаємодії з мережею Біткойн або із кимось іншим, крім вашого партнера по каналу.
 
-* Payments made in a payment channel are only known to you and your partner. In that sense you gain privacy compared to Bitcoin, where every transaction is public.  Only the final balance, which is the aggregate of all payments in that channel, will become visible on the Bitcoin blockchain.
+* Криптографічний протокол побудований таким чином, що між вами та вашим партнером по каналу не потрібна жодна довіра. Якщо ваш партнер перестає відповідати або намагається вас обдурити, ви можете попросити систему Біткоїн виступити в ролі "суду" по розумному контракту, який ви та ваш партнер раніше заключили.
+
+* Платежі, зроблені в платіжному каналі, відомі лише вам і вашому партнеру. У цьому сенсі ви отримуєте більшу конфіденційність порівняно з Біткоїн-транзакціями, де кожна транзакція є публічною. Тільки остаточний баланс, який є сукупністю всіх платежів у цьому каналі, стане видимим у блокчейні.
 
 
-Bitcoin was about 5 years old when talented developers first figured out how payment channels could be constructed and by now there are at least 3 different methods known.
-This chapter will focus on the channel construction method first described in the Lightning Network whitepaper by Joseph Poon and Thaddeus Dryja in 2015. These are known as _Poon-Dryja_ channels, and are the channel construction method currently used in the Lightning Network.
-The other two proposed methods are _Duplex Micropayment_ channels, introduced by Christian Decker around the same time as the "Poon-Dryja" channels and _eltoo_ channels, introduced in 2018 by Christian Decker, Rusty Russel and (author of this book) Olaoluwa Osuntokun.
+Біткоїну було близько 5 років, коли талановиті розробники вперше з'ясували, як можна побудувати платіжні канали, і на сьогодні відомо щонайменше три різні методи.
+В цьому розділі ми зосередимось на методі побудови каналу, вперше описаному у вайтпейпері "Lightning Network" Джозефом Пуном та Тадеушом Дрією в 2015 році. Вони відомі як канали _Пун-Дрія_ і зараз використовуються в Lightning Network.
+Іншими двома методами є канали _Дуплексні Мікроплатежі_ (_Duplex Micropayment_), запропоновані Крістіаном Декером приблизно в той самий час, що й канали "Пун-Дрія", та канали _eltoo_, запропоновані в 2018 році Крістіаном Декером, Расті Расселом та (співавтором цієї книги) Олаолувою Осунтокуном.
 
-Eltoo channels have some interesting properties and simplify the implementation of payment channels. However, eltoo channels require a change in the Bitcoin scripting language and therefore cannot be implemented on the Bitcoin mainnet at this time.
+Канали Eltoo мають деякі цікаві властивості та спрощують реалізацію платіжних каналів. Однак, канали eltoo вимагають зміни мови Script Біткоїна, і тому наразі їх неможливо реалізувати в мережі Біткоїн.
 
 ==== Multisig addresses
 
