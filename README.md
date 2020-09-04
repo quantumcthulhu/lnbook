@@ -29,7 +29,7 @@
 | [Glossary](glossary.asciidoc) | ############# | :arrows_clockwise: |
 | [Вступ](01_introduction.asciidoc) | ##### | :mag: | 100% |
 | [Починаємо](02_getting_started.asciidoc) | ########### | :mag: | 100% |
-| [Основи LN (Як працює LN)](03_how_ln_works.asciidoc) | ########################## | :mag: | 10% |
+| [Основи LN (Як працює LN)](03_how_ln_works.asciidoc) | ########################## | :mag: | 25% |
 | [Intro to LN Routing (HTLCs)](routing.asciidoc) | ###################### | :lock_with_ink_pen: |
 | [Nodes (LN Clients)](node_client.asciidoc) | #################### | :mag: |
 | [Operating a Node](node_operations.asciidoc) | ################# | :bookmark_tabs: |
