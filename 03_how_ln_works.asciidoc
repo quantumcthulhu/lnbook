@@ -386,171 +386,173 @@ latexmath:[H = SHA256(r)].
 
 Платіж в Lightning Network є безпечним лише в тому випадку, якщо +r+ вибрано абсолютно випадково. Безпечність платежів покладається на односторонність хеш-функції та неефективність її повного перебору, а отже на те, що ніхто не може знайти +r+, знаючи +H+.
 
-==== Additional Meta Data
+==== Додаткові Метадані
 
-Invoices can optionally include other useful meta data such as a short text description. If a user has several invoices to pay, the user can read the description and be reminded what the invoice is about.
+Інвойси можуть включати додаткові корисні метадані, наприклад короткий текстовий опис. Якщо користувач має сплатити кілька інвойсів, він зможе прочитати опис і згадати, про що цей чи інший інвойс.
 
-The invoice can also include some _routing hints_, which are unannounced channels that have not been publicly announced, but can be used by the sender to construct a route to the recipient. Routing hints can also be used to suggest public channels, for example channels known by the recipient to have enough inbound capacity to route the payment.
+Інвойс також може містити деякі _поради щодо маршрутизації_ - це інформація про неанонсовані канали, які можуть бути використані відправником для побудови маршруту до одержувача. В порадах про маршрутизацію також можуть бути перелічені публічні канали, наприклад, такі канали, про які одержувач знає, що вони мають достатню вхідну місткість для маршрутизації платежу.
 
-In case the sender's Lightning node is unable to send the payment over the Lightning Network, invoices can optionally include an on-chain Bitcoin address as a fallback.
-
-[NOTE]
-====
-While it is always possible to "fall back" to an on-chain Bitcoin transaction, it is actually better to open a new channel to the recipient instead. If you have to incur on-chain fees to make a payment, you might as well incur those fees to open a channel and make the payment over Lightning. After the payment is made, you are left with an open channel that has liquidity on the recipient's end and can be used to route payments back to your Lightning node in the future. One on-chain transaction gives you a payment and a channel for future use.
-====
-
-
-Lightning invoices contain an expiry date. Since the recipient must keep the preimage +r+ for every invoice issued, it is useful to have invoices expire so that these preimages do not need to be kept forever. Once an invoice expires or is paid, the recipient can discard the preimage.
-
-=== Delivering the payment
-
-We have seen how the recipient creates an invoice that contains a payment hash. This payment hash will be used to move the payment across a series of payment channels, from sender to recipient, even if they do not have a direct payment channel between them.
-
-In the next few sections we will dive into the ideas and methods that are being used to deliver a payment over the Lightning Network and use all the concepts we have presented so far.
-
-First, let's look at the Lightning network's communication protocol.
-
-==== The peer-to-peer gossip protocol
-
-As we mentioned previously, when a payment channel is constructed, the channel partners have the option of making it public, announcing its existence and details to the whole Lightning network.
-
-Channel announcements are communicated over a peer-to-peer _gossip protocol_. A peer-to-peer protocol is a communications protocol where each node connects to a random selection of other nodes in the network, usually over TCP/IP. Each of the nodes that are directly connected (over TCP/IP) to your node are called your _peers_. Your node in turn is one of their peers. Keep in mind, when we say that your node is connected to other peers, we don't mean that you have payment channels, but only via the gossip protocol.
-
-After opening a channel, a node may choose to send out an announcement of the channel via the `channel_announcement` message to its peers.
-Every peer validates the information from the `channel_announcement` message and verifies that the funding transaction is confirmed on the Bitcoin blockchain.
-After verification the node will forward the gossip message to its own peers, and they will forward to their peers and so on, spreading the announcement across the entire network.
-In order to avoid excessive communication the channel announcement is only forwarded by each node if it has not already forwarded that announcement previously.
-
-The gossip protocol is also used to announce information about known nodes, with the `node_announcement` message.
-For this message to be forwarded a node has to have at least one public channel announced on the gossip protocol, again to avoid excessive communication traffic.
-
-Payment channels have various meta data that are useful for other participants of the network.
-This meta data is mainly used for making routing decisions.
-Since nodes might occasionally change the meta data of their channels, this information is shared in a `channel_update` message.
-These messages will only be forwarded approximately four times a day (per channel) to prevent excessive communication.
-The gossip protocol also has a variety of queries and messages to initially synchronize a node with the view of the network or to update the node's view after being offline for a while.
-
-A major challenge for the participants of the Lightning Network is that the topology information that is being shared by the gossip protocol is only partial.
-For example, the capacity of the payment channels is shared on the gossip protocol via the `channel_announcement` message.
-However, this information is not as useful as the actual distribution of the capacity into the local balance between the two channel partners.
-A node can only forward as much bitcoin as it actually owns (local balance) within that channel.
-
-While Lightning could have been designed to share balance information of channels and a precise topology, this has not been done for several reasons:
-
-. To protect the privacy of the users and not shout out every financial transaction and payment that is being conducted. Channel balance updates would reveal that a payment has moved across the channel. This information could be correlated to reveal all payment sources and destinations.
-
-. To scale the amount of payments that can be conducted with the Lightning Network. Remember that the Lightning Network was created in the first place because notifying every participant about every payment does not scale well. Thus, the Lightning Network cannot be designed in a way that balance updates of channels are  shared among participants.
-
-. The Lightning Network is a dynamic system. It changes constantly and frequently. Nodes are being added, other nodes are being turned off, balances change, etc. Even if everything is always communicated, the information will be valid only for a short amount of time. As a matter of fact, information is often outdated by the time it is received.
-
-We will examine the details of the gossip protocol in a later chapter.
-
-For now, it is only important to know that the gossip protocol exists and that it is used to share topology information of the Lightning Network.
-This topology information is crucial for delivering payments through the network of payment channels.
-
-
-==== Path finding and routing
-
-Payments on the Lightning Network are forwarded along a _path_ made of channels linking one participant to another, from the payment source to the payment destination. The process of finding a path from source to destination is called _path finding_. The process of using that path to make the payment is called _routing_.
+На той випадок, якщо Lightning-нода відправника не може надіслати платіж через Lightning Network, інвойси можуть додатково містити on-chain Біткоїн-адресу, як альтернативу.
 
 [NOTE]
 ====
-A frequent criticism of the Lightning network is that "routing" is not solved, or even is an "unsolvable" problem. In fact, routing is trivial. Path finding, on the other hand, is a difficult problem. The two terms are often confused and need to be clearly defined to identify which problem we are attempting to solve.
+Незважаючи на те, що завжди можна "повернутися" до on-chain Біткоїн-транзакцій, натомість краще відкрити новий канал до одержувача. 
+Якщо вам в будь-якому випадку доводиться сплачувати on-chain комісію,  то ви можете сплатити її, щоб відкрити канал і зробити платіж через Lightning. Після здійснення платежу у вас залишиться відкритий канал з ліквідністю на стороні одержувача, і він може бути використаний для прийому платежів вашої Lightning-нодою в майбутньому. Така on-chain транзакція дає вам можливість здійснити платіж і мати канал для подальшого використання.
 ====
 
-As we will see next, the Lightning Network currently uses a _source-based_ protocol for path finding and an _onion routed_ protocol for routing payments. Source-based means that the sender of the payment has to find a path through the network to the intended destination. Onion-routed means that the elements of the path are layered (like an onion), with each layer encrypted so that it can only be seen by one node at a time. We will discuss onion routing in the next section.
 
-=== Source-based Path Finding
+Інвойси містять термін придатності. Оскільки одержувач повинен зберігати прообраз +r+ для кожного виставленого інвойса, корисно мати термін дії інвойсів, щоб не зберігати прообрази вічно. Як тільки сплачується інвойс або закінчується термін його дії, одержувач може видалити прообраз.
 
-If we knew the exact channel balances of every channel we could easily compute a payment path using any of the standard path finding algorithms taught in any computer science program. This could even be solved in a way that optimizes the fees paid to nodes for forwarding the payment.
+=== Доставка платежу
 
-However, the balance information of all channels is not and cannot be known to all participants of the network. We need more innovative path finding strategies.
+Ми бачили вище, як одержувач створює інвойс, що містить хеш платежу. Цей хеш платежу використовується для переміщення платежу через низку платіжних каналів від відправника до одержувача, навіть якщо між ними немає прямого платіжного каналу.
 
-With only partial information about the network topology, path finding is a real challenge and active research is still being conducted into this part of the Lightning Network. The fact that the path finding problem is not "fully solved" in the Lightning Network is a major point of criticism towards the technology.
+Далі ми заглибимося в ідеї та методи, які використовуються для здійснення платежу через Lightning Network, і використаємо концепції, з якими ми вже познайомились.
+
+
+Спочатку давайте розглянемо комунікаційний протокол мережі Lightning.
+
+==== Peer-to-peer протокол пліток
+
+Як ми вже згадували раніше, коли платіжний канал створено, партнери по каналу мають можливість зробити його публічним, повідомивши про його існування та його детальну інформацію всій мережі Lightning.
+
+Анонси каналів передаються за допомогою peer-to-peer _протоколу пліток_. Peer-to-peer (або одноранговий) протокол - це комунікаційний протокол, в якому кожна нода підключається до випадкового набору інших нод, як правило, через TCP/IP. Кожна з нод, безпосередньо підключених (через TCP/IP) до вашої ноди, називається _піром (peer)_. Ваша нода, у свою чергу, є одним із їхніх пірів. Майте на увазі, коли ми говоримо, що ваша нода підключена до інших пірів, ми не маємо на увазі, що у вас із ними є платіжні канали, але лише те, що ваша нода спілкується зі своїми пірами за протоколом пліток.
+
+Після відкриття каналу нода може анонсувати його своїм пірам через повідомлення `channel_announcement`.
+Кожен пір перевіряє інформацію з повідомлення `channel_announcement` та верифікує відповідну транзакції фінансування на блокчейні Біткоїн.
+Після перевірки нода поширює повідомлення серед своїх власних пірів, а ті - серед своїх пірів, і так далі, розповсюджуючи анонс по всій мережі.
+Щоб запобігти надмірній комунікації, анонс каналу розповсюджується кожною нодою лише в тому випадку, якщо вона раніше його не розповсюджувала.
+
+Протокол пліток також використовується для анонсування інформації про відомі ноди за допомогою повідомлення `node_announcement`.
+Щоб це повідомлення було розповсюджене, нода повинна мати принаймні один публічний канал, анонсований через протокол пліток, знову ж таки з метою уникнення надмірного трафіку.
+
+Платіжні канали мають різні метадані, корисні для інших учасників мережі.
+Ці метадані в основному використовуються для прийняття рішень про маршрутизацію.
+Оскільки ноди іноді можуть змінювати метадані своїх каналів, ця інформація передається у повідомленні `channel_update`.
+Ці повідомлення будуть розповсюджуватися приблизно чотири рази на день (на кожний канал), щоб запобігти надмірній комунікації.
+Протокол пліток також має безліч запитів та повідомлень для початкової синхронізації ноди та для оновлення стану ноди після перебування оффлайн.
+
+Основним викликом для учасників Lightning Network є те, що інформація про топологію, що передається через протокол пліток, є лише частковою.
+Наприклад, місткість платіжних каналів розповсюджується за протоколом пліток через повідомлення `channel_announcement`.
+Однак ця інформація не настільки корисна, скільки інформація про фактичний розподіл місткості на балансах двох партнерів по каналу.
+Нода може повідомити тільки загальну кількість біткоїнів в каналі.
+
+Хоча Lightning Network могла би бути спроектований так, що обмінюватись інформацією про баланси партнерів по каналам та про точну топологію мережі, але це не було зроблено з кількох причин:
+
+. Для захисту конфіденційності користувачів, щоб не кричати на всю мережу про кожний платіж. Оновлення інформації про баланс свідчить про те, що по каналу пройшов платіж. Ця інформація може бути співставлена, щоб виявити всі джерела і напрямки платежів.
+
+. Для масштабування кількості платежів, які проводяться через Lightning Network. Не забувайте, що Lightning Network була створена в першу чергу через те, що інформування кожного учасника про кожен платіж в мережі погано масштабується. Тому Lightning Network не може бути спроектована таким чином, щоб оновлення балансу каналів ширилося між учасниками.
+
+. Lightning Network - це динамічна система. Вона змінюється постійно і часто. Додаються нові ноди, інші ноди вимикаються, баланси змінюються і т.д. Навіть якщо розповсюджувати повну інформацію, вона буде актуальною лише короткий проміжок часу. Власне кажучи, інформація часто є застарілою на момент її одержання.
+
+Ми розглянемо протокол пліток в подробицях пізніше.
+
+Наразі важливо лише знати, що існує протокол пліток і що він використовується для обміну інформацією про топологію Lightning Network.
+Інформація про топологію має вирішальне значення для доставки платежів через мережу платіжних каналів.
+
+
+==== Пошук шляху та маршрутизація
+
+Платежі в Lightning Network пересилаються по _шляху (path)_ із каналів, що зв'язують одного учасника з іншим, від джерела платежу до місця призначення платежу. Процес пошуку шляху від джерела до пункту призначення називається _пошуком шляху (path finding)_. Процес використання цього шляху для здійснення платежу називається _машрутизація (routing)_.
 
 [NOTE]
 ====
-One common criticism of path-finding in the Lightning network is that it is unsolvable because it is equivalent to the NP-complete _Traveling Salesperson Problem_, a fundamental problem in computational complexity theory. In fact, path finding in Lightning is not equivalent to TSP and falls into a different class of problems. We successfully solve these types of problems (path finding in graphs with incomplete information) every time we ask Google to give us driving directions with traffic avoidance. We also successfully solve this problem every time we route a payment on the Lightning network.
+Часта критика Lightning Network полягає в тому, що "маршрутизація" - це не вирішена задача або навіть є "невирішуваною" задачею. Насправді маршрутизація є тривіальною. З іншого боку, пошук шляху є складною задачею. Ці два терміни часто плутають, і їх потрібно чітко визначити, щоб визначити, яку саме задачу ми намагаємось вирішити.
 ====
 
-Path finding and routing can be implemented in a number of different ways and multiple path-finding and routing algorithms can co-exist on the Lightning network, just as multiple routing algorithms exist on the internet. Source-based routing is one of many possible solutions and is successful at the current scale of the Lightning network.
+Як ми побачимо далі, Lightning Network наразі використовує протокол _на основі джерела (source-based)_ для пошуку шляхів та протокол _цибулевої маршрутизації (onion routed)_ для маршрутизації платежів. На основі джерела означає, що відправник платежу повинен знайти шлях через мережу до визначеного пункту призначення. Цибулева (onion) маршрутизація означає, що елементи шляху складаються з шарів (як цибуля), причому кожен шар шифрується так, що його може бачити у розшифрованому вигляді одночасно лише одна нода. Ми обговоримо onion-маршрутизацію в наступній частині розділу.
 
-The path finding strategy currently implemented by Lightning nodes is to "probe" paths until one is found that has enough liquidity to forward the payment. This is an iterative process of trial and error, until success is achieved or no path is found. The algorithm currently does not necessarily result in the path with the lowest fees. While this is not optimal and certainly can be improved, even this simplistic strategy works quite well.
+=== Пошук Шляху На Основі Джерела
 
-This "probing" is done by the Lightning node or wallet and is not directly seen by the user.
-The user might only realize that probing is taking place if the payment does not complete instantly.
+Якби ми знали точні баланси кожного каналу, ми могли б легко обчислити шлях платежу, використовуючи будь-який із стандартних алгоритмів пошуку шляхів з курсу інформатики. Це можна навіть вирішити таким чином, щоб оптимізувати комісію, яку беруть ноди за проходження платежу.
+
+Однак інформація про баланси всіх каналів не є і не може бути відома всім учасникам мережі. Нам потрібні більш інноваційні стратегії пошуку шляхів.
+
+Пошук шляхів на основі часткової інформації про топологію мережі є справжнім викликом, і досі проводяться активні дослідження цієї частини Lightning Network. Той факт, що проблема пошуку шляхів не "повністю вирішена" в Lightning Network, є основним пунктом критики цієї технології.
 
 [NOTE]
 ====
-On the Internet we use the internet protocol and an IP forwarding algorithm to forward internet packages from the sender to the destination. While these protocols have the nice property of allowing  internet hosts to collaboratively find a path for information flow through the internet, we cannot reuse and adopt this protocol for forwarding payments on the Lightning Network. Unlike the internet, Lightning payments have to be _atomic_ and channel balances have to remain _private_. Furthermore, the channel capacity in Lightning changes frequently, unlike the Internet where connection capacity is relatively static. These constraints require novel strategies.
+Одним із поширених дорікань щодо пошуку шляхів у Lightning Network є те, що ця задача є нерозв'язною, оскільки вона еквівалентна NP-повній _Задачі Комівояжера_, фундаментальній проблемі в теорії обчислювальної складності. Насправді пошук шляху в Lightning не є еквівалентом Задачі Комівояжера і потрапляє в інший клас проблем. Ми успішно вирішуємо ці типи проблем (пошук шляху на графах з неповною інформацією) кожного разу, коли просимо Google дати нам вказівки щодо руху автомобілем, уникаючи заторів. Ми також успішно вирішуємо цю проблему кожного разу, коли маршрутизуємо платіж по мережі Lightning.
 ====
 
-Of course, path finding is trivial if we want to pay our direct channel partner and we have enough balance on our side of the channel to do so. In all other cases, our node uses information from the gossip protocol to do path finding. This includes currently known public payment channels, known nodes, known topology (how known nodes are connected), known channel capacities, and known fee policies set by the node owners.
+Пошук шляхів і маршрутизація можуть бути реалізовані різними способами, і в мережі Lightning можуть існувати безліч алгоритмів пошуку та маршрутизації, як і багато алгоритмів маршрутизації в Інтернеті. Маршрутизація на основі джерела є одним із багатьох можливих рішень і є достатньо успішною в сучасних масштабах мережі Lightning.
 
-==== Onion routing
+Стратегія пошуку шляхів, реалізована на даний момент нодами Lightning, полягає у "випробовуванні" шляхів, поки не буде знайдено такий, що матиме достатню ліквідність для проведення платежу. Це ітераційний процес спроб і помилок триває, доки не буде досягнутий успіх або шлях не буде знайдений. В даний час алгоритм не обов'язково знаходить шлях з найнижчими комісіями. Хоча ця спрощена стратегія не є оптимальною і, безумовно, може бути вдосконаленою, але навіть вона працює досить добре.
 
-The Lightning Network uses an _onion routing protocol_ similar to the famous TOR (The Onion Router) network.
-The onion routing protocol used in Lightning is called the _SPHINX mixformat_ and will be explained in detail in a later chapter.
+"Випробовування" шляху виконується Lightning-нодою або гаманцем, користувач не бачить його безпосередньо.
+Користувач може зрозуміти, що триває випробовування, лише якщо платіж не завершується миттєво.
 
 [NOTE]
 ====
-Lightning's onion routing SPHINX mixformat is only similar to the TOR network routing in concept, but both the protocol and the implementation are entirely different from those use in the TOR network.
+В Інтернеті для доставки IP-пакетів від відправника до місця призначення  ми використовуємо алгоритм пересилання IP-пакетів. Хоча ці протоколи мають гарну властивість, що дозволяє Інтернет-хостам спільно знаходити шлях для потоку інформації через Інтернет, ми не можемо використати і адаптувати цей протокол для пересилання платежів по мережі Lightning. На відміну від Інтернету, Lightning-платежі повинні бути _атомарними_, а баланси каналу повинні залишатися _конфіденційними_. Крім того, місткість каналу в Lightning часто змінюється, на відміну від Інтернету, де пропускна здатність є відносно сталою. Ці нюанси потребують нових стратегій.
 ====
 
-A payment package used for routing is called an "onion". footnote:[The term "onion" was originally used by the TOR project. Moreover, the Tor network is also called the Onion network and the project uses an onion as its logo. The top level domain name used by TOR services on the internet is ".onion".]
+Звісно, пошук шляху є тривіальним, якщо ми хочемо заплатити своєму прямому партнеру по каналу, і на нашій стороні каналу вистачає балансу для цього. У всіх інших випадках наша нода використовує інформацію з протоколу пліток для пошуку шляху. Сюди входять відомі на той момент публічні платіжні канали, відомі ноди, відома топологія (як саме поєднуються відомі ноди), відомі місткості каналів та відомі комісії, встановлені власниками нод.
 
-Let's use the onion analogy to follow a routed payment. On its route from payment sender (payer) to payment destination (payee) the onion is passed from node to node along the path. The sender constructs the entire onion, from the center out. First, the sender creates the payment information for the (final) recipient of the payment and encrypts it with a layer of encryption that only the recipient can decrypt. Then, the sender wraps that layer with instructions for the node in the path _immediately preceding the final recipient_ and encrypts with a layer that only that node can decrypt.
+==== Цибулева (onion) маршрутизація
 
-The layers are built up with instructions working backwards until the entire path is encoded in layers. The sender then gives the complete onion to the first node in the path that can only read the outermost layer. Each node peels a layer, and finds instructions inside revealing the next node in the path and passes the onion on. As each node peels one layer, it can't read the rest of the onion. All it knows is where the onion came from and where it is going next, without any indication as to who is the original sender or the ultimate recipient.
-
-This continues until the onion reaches the payment destination (payee). Then, the destination node opens the onion and finds there are no further layers to decrypt and can read the payment information inside.
+Lightning Network використовує _протокол цибулевої маршрутизації (onion routing protocol)_, подібний до протоколу знаменитої мережі TOR (The Onion Router).
+Протокол onion-маршрутизації, що використовується в Lightning, називається _SPHINX mixformat_ і буде детально пояснений далі.
 
 [NOTE]
 ====
-Unlike a real onion, when peeling each layer, the nodes add some encrypted padding, to keep the size of the onion the same for the next node. As we will see, this makes it impossible for any of the intermediate nodes to know anything about the size (length) of the path, how many nodes are involved in routing, how many nodes preceded them or how many follow. This might increase privacy by preventing trivial traffic analysis attacks.
+Onion-маршрутизація Lightning SPHINX mixformat аналогічна маршрутизації мережі TOR лише за концепцією, але як протокол, так і його реалізація повністю відрізняються від тих, що використовуються в мережі TOR.
 ====
 
-The onion routing protocol used in Lightning has the following properties:
+Платіжний пакет, що використовується для маршрутизації, називається "цибулею" (onion). footnote:[Термін "цибуля" відпочатку використовувався в проекті TOR. Більше того, мережу Tor також називають Onion network, і проект використовує цибулю як свій логотип. Доменне ім’я верхнього рівня, що використовується службами TOR в Інтернеті, - ".onion".]
 
-. An intermediary node can only see on which channel it received an onion and on which channel to forward the onion. This means that no routing node can know who initiated the payment and to whom the payment is destined. This is the most important property and results in a high degree of privacy.
+Давайте скористаємося цибулевою аналогією, щоб виконати маршрутизований платіж. На своєму шляху від відправника платежу (платника) до місця призначення (одержувача платежу) цибуля передається від ноди до ноди протягом шляху. Відправник конструює всю цибулю, починаючи із середини назовні. Спочатку відправник створює інформацію про платіж для (кінцевого) одержувача платежу та загортає його у шар шифрування, яке може розшифрувати лише одержувач платежу. Далі відправник обгортає цей шар інструкціями для ноди, яка розташовується на шляху _безпосередньо перед кінцевим одержувачем_ і загортає у шар шифрування, яке може розшифрувати лише ця нода.
 
-. The onions are small enough to fit into a single TCP/IP packet and even a link layer (e.g. Ethernet) frame. This makes traffic analysis of the payments significantly more difficult, increasing privacy further.
+Шари конструюються із інструкцій, доки весь шлях не буде закодований у шари. Потім відправник передає повну цибулю першій ноді на шляху, яка може прочитати лише зовнішній шар. Кожна нода знімає шар шифрування і знаходить всередині інструкції, що розкривають інформацію про наступну ноду на шляху, та передає цибулю далі. Оскільки кожна нода здатна зняти лише свій шар шифрування, вона не може прочитати решту цибулі. Все, що вона знає, - це звідки прийшла цибуля і куди вона рухається далі, без жодних вказівок на те, хто є початковим відправником або кінцевим одержувачем.
 
-. The onions are constructed such that they will always have the same length independent of the position of the processing node along the path. As each layer is "peeled" the onion is padded with encrypted "junk" data to keep the size of the onion the same. This prevents intermediary nodes from knowing their position in the path.
+Так триває до того часу, поки цибуля не досягне місця призначення платежу (тобто, ноди одержувача). Нода одержувача відкриває цибулю і виявляє, що наступні шари для дешифрування відсутні, і може прочитати всередні інформацію про платіж.
 
-. Onions have an HMAC (Hashed Message Authentication code) at each layer so that manipulations of onions are prevented and practically impossible
+[NOTE]
+====
+На відміну від справжньої цибулі, при знятті кожного шару ноди додають таку ж кількість байт для відступу, щоб розмір цибулі залишався однаковим для наступної ноди. Як ми побачимо, це робить неможливим будь-якій з проміжних нод дізнатись щось про довжину шляху, скільки нод бере участь у маршрутизації, скільки нод передували їм або будуть далі. Це може збільшити конфіденційність, запобігаючи тривіальним атакам аналізу трафіку.
+====
 
-. Onions can have up to 20 hops or onion layers if you prefer. This allows for sufficiently long paths.
+Протокол onion-маршрутизації, що використовується в Lightning, має наступні властивості:
 
-. The encryption of the onion for every hop uses different ephemeral encryption keys with every single onion. Should a key (in particular the private key of a node) leak at some point in time an attacker cannot decrypt them. In simpler terms, keys are never reused in order to achieve more security.
+. Нода-посередник може бачити лише, по якому каналу вона отримала цибулю і по якому каналу має її переслати. Це означає, що жодна нода в маршруті не може знати, хто саме ініціював платіж і кому він призначений. Це найважливіша властивість, що дає високий рівень конфіденційності.
 
-. Errors can be sent back from the erring node to the original sender, using the same onion routed protocol. Error onions are indistinguishable from routing onions, to external observers and intermediary nodes. Error routing enables the trial-and-error "probing" method used to find a path that has sufficient capacity to successfuly route a payment.
+. Цибулі достатньо малі, щоб вміститися в єдиний TCP/IP пакет і навіть у кадр канального рівня (наприклад, Ethernet). Це суттєво ускладнює аналіз трафіку, також збільшуючи конфіденційність.
 
-Onion routing will be examined in detail in <<onion_routing>>.
+. Цибулі побудовані таким чином, що вони завжди мають сталий розмір, незалежно від положення обробляючої ноди вздовж шляху. Коли «знімається» шар шифрування, цибуля доповнюється «сміттям», щоб її розмір не змінювався. Це заважає нодам-посередникам дізнатись своє положення на шляху.
 
-==== Payment Forwarding Algorithm
+. Цибулі мають HMAC (Hashed Message Authentication code, Хеш-код Аутентифікації Повідомлень) на кожному шарі, тому маніпуляції з цибулею неможливі на практиці.
 
-Once the sender of a payment finds a possible path across the network and constructs an onion, the payment is forwarded by each node in the path. Each node processes one layer of the onion and forwards it to the next node in the path.
+. Цибулі можуть мати до 20 хопів (хоп в термінології комп'ютерних мереж - це перехід пакету данних від одного сегменту мережі до іншого) або цибулевих шарів, якщо хочете. Цим забезпечуються достатньо довгі шляхи.
 
-Each intermediary node receives a Lightning Message called `update_add_htlc` with a payment hash and an onion. The intermediary node executes a series of steps, called the _payment forwarding algorithm_:
+. Для шифрування цибулі на кожному хопі використовуються різні тимчасові ключі шифрування. Якщо ключ (зокрема, приватний ключ ноди) буде вкрадено зловмисником в якийсь момент часу, він не зможе розшифрувати цибулі. Простими словами, для досягнення більшої безпеки ключі ніколи не використовуються повторно.
 
-. The node decrypts the outer layer of the onion and checks the message's integrity.
+. Повідомлення про помилки можуть бути відправлені з ноди, яка генерує помилку, початковому відправнику за тим самим протоколом цибулевої маршрутизації. Для зовнішнього спостерігача та нод-посередників цибулі помилок не відрізняються від цибуль маршрутизації. Маршрутизація помилок використовується при "випробуванні" шляху методом спроб і помилок, який використовується для пошуку шляху, що має достатню місткість для успішної маршрутизації платежу.
 
-. It confirms that it can fulfill the routing hints, based on the channel fees and available capacity on the outgoing channel.
+Onion-маршрутизація буде детально розглянута в <<onion_routing>>.
 
-. It works with its channel partner on the incoming channel to update the channel state.
+==== Алгоритм Пересилання Платежів
 
-. It adds some padding to the end of the onion to keep it at a constant length since it removed some data from the beginning.
+Як тільки відправник платежу знаходить можливий шлях у мережі та створює цибулю, платіж пересилається кожною нодою із шляху. Кожна нода обробляє один шар цибулі та пересилає її далі по шляху наступній ноді.
 
-. It follows the routing hints to forward the modified onion package on its outgoing payment channel by also sending an `update_add_htlc` message which includes the same payment hash and the onion.
+Кожна проміжна нода отримує Lightning-повідомлення під назвою `update_add_htlc` із хешем платежу та цибулею. Проміжна нода виконує ряд кроків, які називаються _алгоритмом пересилання платежів (payment forwarding algorithm)_:
 
-. It works with its channel partner on the outgoing channel, to update the channel state.
+. Нода розшифровує зовнішній шар цибулі та перевіряє цілісність повідомлення.
 
-Of course, these steps are interrupted and aborted if an error is detected and an error message is sent back to the originator of the `update_add_htlc` message. The error message is also formatted as an onion and sent backwards on the incoming channel.
+. Нода підтверджує, що може виконати підказки щодо маршрутизації, виходячи з доступної місткості на вихідному каналі та комісії.
 
-As the error propagates backwards on each channel along the path, the channel partners remove the pending payment, rolling back the payment in the opposite way from which it started.
+. Нода співпрацює зі своїм партнером по вхідному каналу для оновлення стану каналу.
 
-While the likelihood for a payment failure is high if it does not settle quickly, a node should never initiate another payment attempt along a different path before the onion returns with an error. The sender would pay twice if both payment attempts eventually succeeded.
+. Оскільки нода видаляє деякі дані на початку цибулі, вона додає відступ на кінці, щоб розмір цибулі не змінювався.
+
+. Нода слідує підказкам щодо маршрутизації, щоб переслати модифікований onion-пакет на свій вихідний платіжний канал, надсилаючи повідомлення `update_add_htlc`, яке включає той самий хеш платежу та цибулю.
+
+. Вона співпрацює зі своїм партнером по вихідному каналу для оновлення стану каналу.
+
+Звісно, в разі помилки ці кроки перериваються і припиняються, а ініціатору повідомлення `update_add_htlc` відправляється повідомлення про помилку. Повідомлення про помилку надсилається в onion-форматі назад на вхідний канал.
+
+Коли помилка поширюється назад кожному каналу по шляху, партнери по каналу видаляють очікуючий платіж, відкочуючи платіж.
+
+Якщо платіж не проходить швидко, є велика ймовірність помилки платежу, проте нода ніколи не повинна ініціювати повторну спробу платежу по іншому шляху, доки їй не повернеться цибуля з помилкою. Інакше, відправник сплачував би двічі, якщо обидві спроби оплати врешті-решт мали б успіх.
 
 === Peer-to-Peer Communication Encryption
 
