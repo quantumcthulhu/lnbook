@@ -554,80 +554,80 @@ Onion-маршрутизація буде детально розглянута 
 
 Якщо платіж не проходить швидко, є велика ймовірність помилки платежу, проте нода ніколи не повинна ініціювати повторну спробу платежу по іншому шляху, доки їй не повернеться цибуля з помилкою. Інакше, відправник сплачував би двічі, якщо обидві спроби оплати врешті-решт мали б успіх.
 
-=== Peer-to-Peer Communication Encryption
+=== Шифрування P2P-Комунікації
 
-The Lightning Network protocol is mainly a peer-to-peer protocol between its participants. As we saw in previous sections, there are two overlapping functions in the network, forming two logical networks that together are _The Lightning Network_:
+Lightning Network - це p2p-протокол між його учасниками. Як ми бачили в попередніх розділах, мережа виконує дві функції, які утворюють дві логічні мережі, що разом складають _Lightning Network_:
 
-1. A broad peer-to-peer network that uses a gossip protocol to propagate topology information, where peers randomly connect to each other. Peers don't necessarily have payment channels between them, so they are not always channel partners.
+1. Широка p2p-мережа, що використовує протокол пліток для розповсюдження інформації про топологію, і в якій випадковим чином піри з’єднуються між собою. Піри не обов’язково мають між собою платіжні канали, тому вони не завжди є партнерами по каналах.
 
-2. A network of payment channels between channel partners. Channel partners also gossip about topology, meaning they are peer nodes in the gossip protocol.
+2. Мережа платіжних каналів між партнерами по каналам. Партнери по каналу також пліткують між собою про топологію, тобто вони є пірами у протоколі пліток.
 
-All communication between peers is sent via messages called _Lightning Messages_. These messages are all encrypted, using a cryptographic communications framework called the _Noise Protocol Framework_. The Noise Protocol Framework allows the construction of cryptographic communication protocols that offer authentication, encryption, forward secrecy and identity privacy. The Noise Protocol Framework is also used in a number of popular end-to-end encrypted communications systems such as WhatsApp, Wireguard, and I2P. More information can be found here:
+Вся комунікація між пірами відбувається шляхом відправленням повідомлень під назвою _Lightning Messages_. Всі ці повідомлення зашифровані із використанням криптографічного фреймворку _Noise Protocol Framework_. Цей фреймворк дозволяє створювати криптографічні протоколи зв'язку, що пропонують аутентифікацію, шифрування, пряму секретність та конфіденційність особи. Noise Protocol Framework також використовується в ряді популярних комунікаційних систем з наскрізним шифруванням, таких як WhatsApp, Wireguard та I2P. Більше інформації можна знайти тут:
 
 https://noiseprotocol.org/
 
-The use of the Noise Protocol Framework in the Lightning Network ensures that every message on the network is both authenticated and encrypted, increasing the privacy of the network and its resistance to traffic analysis, deep packet inspection and eavesdropping. However, as a side-effect, this makes protocol development and testing a bit tricky as one can't simply observe the network with a packet capture or network analysis tool such as wireshark. Instead, developers have to use specialized plugins that decrypt the protocol from the perspective of one node, such as the _lightning dissector_, a wireshark plugin:
+Використання Framework Noise Protocol в Lightning Network гарантує, що кожне повідомлення в мережі одночасно аутентифіковане і зашифроване, що підвищує конфіденційність та стійкість мережі до аналізу трафіку, глибокої інспекції пакетів та прослуховування. Однак тут є побічний ефект, адже це робить розробку і тестування протоколів дещо складнішими, оскільки не можна просто спостерігати за мережею за допомогою перехоплення пакетів або такого інструменту для аналізу мережі, як wireshark. Натомість розробники повинні використовувати спеціалізовані плагіни, які розшифровують протокол з точки зору ноди, наприклад, _lightning dissector_, плагін для wireshark:
 
 https://github.com/nayutaco/lightning-dissector
 
-=== Thoughts about Trust
-As long as a person follows the protocol and has their node secured, there is no major risk of losing funds when participating in the Lightning Network.
-However, there is the cost of paying on-chain fees when opening a channel.
-Any cost should come with a corresponding benefit.
-In our case the reward for Alice for bearing the cost of opening a channel is that Alice can send and receive payments of bitcoin on the Lightning Network at any time and that she can earn fees in bitcoin by forwarding payments for other people.
-Alice knows that in theory Bob can close the channel immediately after opening resulting in on-chain closing fees for Alice.
-Alice will need to have a small amount of trust in Bob.
-Alice has been to Bob's Cafe and clearly Bob is interested in selling her coffee, so Alice can trust Bob in this sense.
-There are mutual benefits to both Alice and Bob.
-Alice decides that the reward is enough for her to take on the cost of the on-chain fee for creating a channel to Bob.
-In contrast, Alice will not open a channel to someone unknown in a foreign country who just sent her an uninvitedly email asking her to open a channel to him.
+=== Думки щодо Довіри
+Поки людина дотримується протоколу і захищає свою ноду, вона не несе великого ризику втратити кошти через участь в Lightning Network.
+Однак існує необхідність сплати комісій при відкритті каналу.
+Будь-які витрати повинні мати відповідну вигоду.
+У нашому випадку винагородою для Аліси за покриття витрат на відкриття каналу є те, що Аліса може відправляти та отримувати біткоїни через Lightning Network в будь-який час, і що вона може заробляти комісії в біткоїнах, пересилаючи платежі інших людей.
+Аліса знає, що теоретично Боб може закрити канал відразу після відкриття, за що Аліса буде змушена сплатити on-chain комісію.
+Алісі потрібно мати невелику довіру до Боба.
+Аліса була в кафе Боба, і, очевидно, Боб був зацікавлений продати свою каву, тому Аліса могла довіряти Бобу в цьому сенсі.
+І Аліса, і Боб мають взаємну вигоду.
+Аліса вирішує, що вона отримує для себе достатньо плюсів, щоб взяти на себе оплату on-chain комісії за створення каналу до Боба.
+На відміну від цього, Аліса не відкриватиме канал із кимось невідомим з чужої країни, хто щойно надіслав їй неочікуваний електронний лист із проханням відкрити канал до нього.
 
-=== Comparison with Bitcoin
+=== Порівняння з Біткоїном
 
-While the Lightning Network is built on top of Bitcoin and inherits many of its features and properties, there are important differences that users of both networks need to be aware of.
+Хоча мережа Lightning побудована поверх Біткоїна і успадковує багато її особливостей та властивостей, існують важливі відмінності, про які повинні знати користувачі обох мереж.
 
-Some of these differences are differences of terminology. There are also architectural differences and differences in the user experience. In the next few sections we will examine the differences and similarities, explain the terminology and adjust our expectations.
+Деякі відмінності присутні в термінології. Також існують архітектурні відмінності та відмінності в користувацькому досвіді. У наступних кількох секціях ми розглянемо відмінності та схожість, пояснимо термінологію та скоригуємо наші очікування.
 
-==== Addresses vs Invoices, Transactions vs Payments
+==== Адреси vs Інвойси, Транзакції vs Платежі
 
-In typical payment using Bitcoin, a user receives a Bitcoin address (e.g. scanning a QR code on a webpage, or receiving it in an instant message or email from a friend). They then use their Bitcoin wallet to create a transaction to send funds to this address.
+Зазвичай при оплаті у Біткоїні користувач отримує біткоїн-адресу (наприклад, відсканувавши QR-код на веб-сторінці або отримавши текстову адресу від друга через швидке повідомлення або e-mail). Потім він використовує свій Біткоїн-гаманець для створення транзакції для відправлення коштів на цю адресу.
 
-On the Lightning Network, the recipient of a payment creates an invoice. A Lightning invoice can be seen as analogous to a Bitcoin address. The intended recipient gives the Lightning invoice to the sender, as a QR code or character string, just like a Bitcoin address.
+В Lightning Network отримувач платежу створює інвойс. Lightning-інвойс можна розглядати як аналог Біткоїн-адреси. Одержувач дає відправнику Lightning-інвойс у вигляді QR-коду або тексту, як і у випадку Біткоїн-адреси.
 
-The sender uses their Lightning wallet to pay the invoice, copying the invoice text or scanning the invoice QR code. A Lightning payment is analogous to a Bitcoin "transaction".
+Відправник використовує свій Lightning-гаманець для оплати інвойсу, скопіювавши текст інвойсу або відсканувавши його QR-код. Lightning-платіж є аналогом Біткоїн-"транзакції".
 
-There are some differences in the user experience however. A Bitcoin address is _reusable_. Bitcoin addresses never expire and if the owner of the address still holds the keys, the funds held within are always accessible. A sender can send any amount of bitcoin to a previously used address, and a recipient can post a single static address to receive many payments. While this goes against the best practices for privacy reasons, it is technically possible and in fact quite common.
+Однак існують деякі відмінності в користувацькому досвіді. Біткоїн-адреса може бути _використана багаторазово_. Біткоїн-адреси  не мають терміну придатності, і допоки власник адреси володіє ключем, кошти, що знаходяться на відповідній адресі, завжди доступні. Відправник може надіслати будь-яку кількість біткоїнів на раніше використану адресу, а одержувач може опублікувати одну постійну адресу, щоб отримати на неї багато платежів. Хоча це суперечить найкращим практикам з міркувань конфіденційності, технічно це можливо і насправді досить часто відбувається.
 
-In Lightning however, each invoice can only be used once for a specific payment amount. You cannot pay more or less, you cannot use an invoice again and the invoice has an expiry time built in. In Lightning, a recipient has to generate a new invoice for each payment, specifying the payment amount in advance. There is an exception to this, a mechanism called _keysend_, which we will examine in <<keysend>>.
+Однак у Lightning кожен інвойс можна використовувати лише один раз і лише для визначеної суми платежу. Ви не можете платити більше або менше визначеної суми, ви не можете використовувати інвойс кілька разів, кожен інвойс має вбудований термін придатності. У Lightning одержувач має створити окремий новий інвойс для кожного платежу, заздалегідь вказавши суму платежу. З цього є виняток, а саме механізм під назвою _keysend_, який ми розглянемо в <<keysend>>.
 
-==== Selecting Outputs vs Finding a Path
+==== Вибір Виходів vs Пошук Шляху
 
-In order to make a payment on the Bitcoin network, a sender needs to consume one or more Unspent Transaction Outputs (UTXOs).
-If a user has multiple UTXOs, they (or rather their wallet) will need to select which UTXO(s) to send.
-For instance, a user making a payment of 1 BTC can use a single output with value 1 BTC, two outputs with value 0.25 BTC and 0.75 BTC, or four outputs with value 0.25 BTC each.
+Для того, щоб здійснити платіж у мережі Біткоїн, відправник повинен використати один або кілька невитрачених виходів транзакцій (UTXO).
+Якщо користувач має кілька UTXO, їм (вірніше, їх гаманцю) потрібно буде вибрати, які саме UTXO витратити.
+Наприклад, користувач, який здійснює платіж у розмірі 1 BTC, може використати один вихід з 1 BTC, два виходи на 0.25 BTC і на 0.75 BTC або чотири виходи по 0.25 BTC кожен.
 
-On Lightning, payments do not require inputs to be consumed, Instead each payment results in an update of the channel balance, redistributing it between the two channel partners. The sender experiences this as "moving" channel balance from their end of a channel to the other end, to their channel partner. Lightning payments use a series of channels to route from sender to recipient. Each of these channels must have sufficient capacity to route the payment.
+В Lightning платежі не потребують входів для трати, замість цього кожен платіж призводить до оновлення балансу каналу, перерозподіляючи кошти між двома партнерами по каналу. Відправник бачить це як "переміщення" балансу каналу з його кінця каналу на інший кінець до свого партнера по каналу. Lightning-платежі використовують ряд каналів для маршрутизації платежу від відправника до одержувача. Кожен із цих каналів повинен мати достатню місткість для маршрутизації платежу.
 
-As many possible channels and paths can be used to make a payment, the Lightning user's choice of channels and paths is somewhat analogous to the Bitcoin user's choice of UTXO.
+Оскільки для здійснення платежу можна використовувати безліч можливих каналів і шляхів, то вибір каналів та шляхів Lightning-користувачем є в деякому сенсі аналогічним вибору UTXO Біткоїн-користувачем.
 
-With technologies such as Atomic Multi-Path (AMP) and Multi-Path Payments (MPP), which we will review in subsequent chapters, several Lightning paths can be aggregated into a single atomic payment, just like several Bitcoin UTXO can be aggregated into a single atomic Bitcoin transaction.
+Завдяки таким технологіям, як Atomic Multi-Path (AMP, Атомарний Мульти-Шлях) і Multi-Path Payments (MPP, Мульти-Шляхові Платежі), які ми розглянемо в наступних розділах, кілька шляхів Lightning можна об'єднати в один атомарний платіж, як і кілька UTXO можна об'єднати в одну атомарну Біткоїн-транзакцію.
 
-==== Change Outputs on Bitcoin vs No Change on Lightning
+==== Решта у Біткоїні vs Відсутність Решти у Lightning
 
-In order to make a payment on the Bitcoin network, the sender needs to consume one or more Unspent Transaction Outputs (UTXOs). UTXO can only be spent in full, they cannot be divided and partially spent. So if a user wishes to spend 0.8 BTC, but only has a 1 BTC UTXO, then they need to spend the entire 1 BTC UTXO and send 0.8 BTC to the recipient, and 0.2 BTC back to themselves as change. The 0.2 BTC change payment creates a new UTXO called a 'change output'.
+Щоб виконати платіж у мережі Біткоїн, відправник повинен використати один або кілька невитрачених виходів транзакцій (UTXO). UTXO можна витратити тільки повністю, його не можна розділити та витратити частково. Отже, якщо користувач хоче заплатити 0,8 BTC, але має лише один UTXO на 1 BTC, тоді йому потрібно витратити весь цей 1 BTC UTXO, при цьому відправити 0,8 BTC одержувачу і відправити 0,2 BTC назад собі в якості решти. Виплата решти 0,2 BTC створює новий UTXO, він називається "вихід з рештою".
 
-On Lightning, the funding transaction spends some Bitcoin UTXO, creating a multi-signature UTXO to open the channel. Once the bitcoin is locked within that channel, portions of it can be sent back and forth within the channel, without the need to create any change.
-This is because the channel partners simply update the channel balance and only create a new UTXO when the channel is eventually closed, with the channel closing transaction.
+У Lightning при відкриванні каналу транзакція фінансування витрачає деякі UTXO і створює мультисиговий UTXO. Після того, як певна сума біткоїнів заблокована в каналі, її можна пересилати туди-сюди по каналу частинами і без решти.
+Так відбувається тому, що партнери по каналу просто оновлюють баланс каналу і створюють нові UTXO лише тоді, коли канал врешті-решт закривається транзакцією закриття.
 
-==== Mining Fees vs Routing Fees
+==== Комісії за Майнинг vs Комісії за Маршрутизацію
 
-On the Bitcoin network, users pay fees to miners to have their transactions included in a block.
-These fees are paid to the miner who mines that particular block.
-The amount of the fee is based on the _size_ of the transaction in _bytes_ that the transaction is using in a block, as well as how quickly the user wants that transaction mined.
-As miners will typically mine the most profitable transactions first, a user who wants their transaction mined immediately will pay a _higher_ fee-per-byte, while a user who is not in a hurry will pay a _lower_ fee-per-byte.
+У мережі Біткоїн користувачі платять комісії майнерам за включення їх транзакцій у блок. Ці комісії отримує майнер відповідного блоку.
+Розмір комісії залежить від _розміру_ транзакції в _байтах_, які займає транзакція в блоці, а також від того, як швидко користувач хоче, щоб ця транзакція була змайнена.
+Оскільки майнери зазвичай спочатку майнять найвигідніші транзакції, то користувач, який хоче, щоб його транзакція була змайнена негайно, буде змушений платити _вищу_ комісію за байт, тоді як користувач, який не поспішає, може сплатити _меншу_ комісію за байт.
 
-On the Lightning Network, users pay fees to other (intermediary node) users to route payments through their channels.
-In order to route a payment, an intermediary node will have to move funds in two or more channels they own, as well as transmit the data for the sender's payment. Typically, the routing user will charge the sender based on the _value_ of the payment, having established a minimum _base fee_ (a flat fee for each payment) and a _fee rate_ (a pro-rated fee proportional to the value of the payment). Higher value payments will thus cost more to route, and a market for liquidity is formed, where different users charge different fees for routing through their channels.
+У Lightning Network користувачі платять комісії іншим користувачам (нодам-посередникам) за маршрутизацію платежів через їх канали.
+Щоб маршрутизувати платіж, нода-посередник має перемістити кошти в двох або більше своїх каналах, а також передати дані щодо платежу. Зазвичай посередник стягує з відправника комісію, виходячи з _суми_ платежу, встановлюючи мінімальну _base fee (базову комісію)_ (фіксовану комісію за кожен платіж) та _fee rate (відсоток)_ (пропорційно до суми платежу). Таким чином, маршрутизація платежів на більшу суму коштує дорожче, формується ринок ліквідності, де різні користувачі беруть різну комісію за маршрутизацію платежів через свої канали.
+
 
 ==== Varying Fees Depending Traffic vs Announced Fees
 
