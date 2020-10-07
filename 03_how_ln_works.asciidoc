@@ -80,44 +80,46 @@ Lightning Network також використовує gossip-протокол (�
 
 Канали Eltoo мають деякі цікаві властивості та спрощують реалізацію платіжних каналів. Однак, канали eltoo вимагають зміни мови Script Біткоїна, і тому наразі їх неможливо реалізувати в мережі Біткоїн.
 
-==== Мультисиг адреси
+==== Мультипідписні (мультисиг) адреси
 
-Payment channels are built on top of 2-of-2 multisignature addresses, timelocks and Segregated Witness transaction outputs. We will not revise these relatively advanced concepts of the Bitcoin system. Instead, in this section we will provide a high-level overview of multisignature scripts and how they allow us to construct payment channels.
-If you have already studied Bitcoin and are familiar with multisignature addresses, feel free to skip this section.
+Платіжні канали побудовані на 2-з-2 мультисиг-адресах, блокуванням за часом та виходах SegWi†-транзакцій. Ми не будемо переглядати ці відносно просунуті концепції системи Біткоїн. Натомість у цьому розділі ми розглянемо на високому рівні мультисиг-скрипти, і як вони дозволяють нам будувати платіжні канали.
+Якщо ви вже вивчали Біткоїн і знайомі з мультисиг-адресами, можете сміливо пропускати цей розділ.
 
 [TIP]
 ====
-A deep dive into the topic discussed here is presented in chapter 7 of Mastering Bitcoin which can be found at: https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch07.asciidoc.
-Also, in case you are not familiar with P2PKH addresses and the basic format and scripting language of Bitcoin we encourage you to study chapter 6 of Mastering Bitcoin which can be found at: https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch06.asciidoc.
-There is also a video on Rene's YouTube channel which dissects the bits and bytes of a transaction spending from a P2PKH output at: https://youtu.be/1n4g3eYX1UI
+Ця тема глибоко розкрита в розділі 7 книги "Mastering Bitcoin", який можна знайти тут: https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch07.asciidoc.
+Крім того, якщо ви не знайомі з P2PKH-адресами, основним форматом та скриптовою мовою Біткоїна, радимо вам вивчити розділ 6 "Mastering Bitcoin", який можна знайти за адресою: https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch06.asciidoc.
+Також на YouTube-каналі Rene є відео, де він розбирає по бітам і байтам транзакцію витрати P2PKH-виходу: https://youtu.be/1n4g3eYX1UI
 ====
 
-The Bitcoin scripting language provides a multisignature building block (primitive), that can be used to build escrow services and complex ownership configurations between several stakeholders. An arrangement that requires multiple signatures to spend Bitcoin is called a _multisignature scheme_, further specified as an _K-of-N_ scheme, where:
+Скриптова мова Біткоїна має такий будівельний блок (примітив) як мультипідпис (мультисиг), який можна використовувати для створення ескроу-сервісів та складних конфігурацій управління власністю з кількома стейкхолдерами. Механізм, що вимагає використання кількох підписів для витрачання біткоїнів, називається _мультипідписною схемою_ і далі буде позначатися як схема _K-з-N_, де:
 
 
-* N is the total number of signers identified in the multisignature scheme, and
-* K is the _quorum_ or _threshold_ - the minimum number of signatures to authorize spending.
+* N - загальна кількість підписантів, ідентифікованих в мультипідписній схемі
+* K - _кворум_ або _поріг_, мінімальна кількість підписів, потрібна для авторизації витрати
 
-The script for an K-of-N multisignature is:
+
+Скрипт K-з-N мультипідпису виглядає так:
 
 ----
-K <PubKey1> <PubKey2> ... PubKeyN N CHECKMULTISIG
+K <PubKey1> <PubKey2> ... <PubKeyN> N CHECKMULTISIG
 ----
 
-where N is the total number of listed public keys (Public Key 1 through Public Key N) and K is the threshold of required signatures to spend the output.
+де N - це загальна кількість перелічених публічних ключів (від PubKey1 до PubKeyN), K - це поріг кількості потрібних підписів для витрати виходу.
 
-The Lightning Network uses a 2-of-2 multisignature scheme to build a payment channel. For example, a payment channel between Alice and Bob would be build on a 2-of-2 multisignature like this:
+Для побудови платіжного каналу Lightning Network використовує мультипідписну схему 2-з-2. Наприклад, платіжний канал між Алісою та Бобом був би побудований на такому 2-з-2 мультисигу:
 
 ----
 2 <PubKey Alice> <PubKey Bob> 2 CHECKMULTISIG
 ----
 
-The preceding locking script can be satisfied with an unlocking script containing a pair of signatures:
+Вищенаведений блокуючий скрипт може бути розблокований скриптом з двома підписами:
 
 ----
 0 <Sig Alice> <Sig Bob>
 ----
-The two scripts together would form the combined validation script:
+
+Разом ці два скрипти формують комбінований скрипт валідації:
 
 ----
 0 <Sig Alice> <Sig Bob> 2 <PubKey Alice> <PubKey Bob> 2 CHECKMULTISIG
@@ -606,7 +608,7 @@ https://github.com/nayutaco/lightning-dissector
 Якщо користувач має кілька UTXO, їм (вірніше, їх гаманцю) потрібно буде вибрати, які саме UTXO витратити.
 Наприклад, користувач, який здійснює платіж у розмірі 1 BTC, може використати один вихід з 1 BTC, два виходи на 0.25 BTC і на 0.75 BTC або чотири виходи по 0.25 BTC кожен.
 
-В Lightning платежі не потребують входів для трати, замість цього кожен платіж призводить до оновлення балансу каналу, перерозподіляючи кошти між двома партнерами по каналу. Відправник бачить це як "переміщення" балансу каналу з його кінця каналу на інший кінець до свого партнера по каналу. Lightning-платежі використовують ряд каналів для маршрутизації платежу від відправника до одержувача. Кожен із цих каналів повинен мати достатню місткість для маршрутизації платежу.
+В Lightning платежі не потребують входів для витрати, замість цього кожен платіж призводить до оновлення балансу каналу, перерозподіляючи кошти між двома партнерами по каналу. Відправник бачить це як "переміщення" балансу каналу з його кінця каналу на інший кінець до свого партнера по каналу. Lightning-платежі використовують ряд каналів для маршрутизації платежу від відправника до одержувача. Кожен із цих каналів повинен мати достатню місткість для маршрутизації платежу.
 
 Оскільки для здійснення платежу можна використовувати безліч можливих каналів і шляхів, то вибір каналів та шляхів Lightning-користувачем є в деякому сенсі аналогічним вибору UTXO Біткоїн-користувачем.
 
@@ -628,113 +630,112 @@ https://github.com/nayutaco/lightning-dissector
 У Lightning Network користувачі платять комісії іншим користувачам (нодам-посередникам) за маршрутизацію платежів через їх канали.
 Щоб маршрутизувати платіж, нода-посередник має перемістити кошти в двох або більше своїх каналах, а також передати дані щодо платежу. Зазвичай посередник стягує з відправника комісію, виходячи з _суми_ платежу, встановлюючи мінімальну _base fee (базову комісію)_ (фіксовану комісію за кожен платіж) та _fee rate (відсоток)_ (пропорційно до суми платежу). Таким чином, маршрутизація платежів на більшу суму коштує дорожче, формується ринок ліквідності, де різні користувачі беруть різну комісію за маршрутизацію платежів через свої канали.
 
+==== Змінні Комісії Залежно від Навантаження vs Анонсовані Комісії
 
-==== Varying Fees Depending Traffic vs Announced Fees
+В мережі Біткоїн майнери працюють заради прибутку, тому зазвичай вони намагаються включити якомога більше транзакцій у блок, не перевищуючи місткість блоку, що називається _block weight (вага блоку)_.
 
-On the Bitcoin network, miners are profit-seeking and will typically include as many transactions in a block as possible, while staying within the block capacity called the _block weight_.
+Якщо в черзі (що називається mempool/мемпул) знаходиться більше транзакцій, ніж може вміститися в блок, майнери майнять ті транзакції, що мають найбільшу комісію за одиницю (байт) _ваги транзакції_.
+Тому коли в черзі знаходиться багато транзакцій, користувачі мають платити вищу комісію, щоб їх транзакції були включені до наступного блоку, або вони мають зачекати, поки в черзі стане менше транзакцій.
+Це, очевидно, призводить до появи ринку комісій, коли суми комісій залежать від того наскільки терміново користувачам потрібно, щоб їх транзакція була включена до наступного блоку.
 
-If there are more transactions in the queue (called the mempool) than can fit in a block, they will begin by mining the transactions that pay the highest fees per unit (bytes) of _transaction weight_.
-Thus, when there are many transactions in the queue, users have to pay a higher fee to be included in the next block, or they have to wait until there are fewer transactions in the queue.
-This naturally leads to the emergence of a fee market where users pay based on how urgently they need their transaction included in the next block.
+У мережі Біткоїн простір блоків є дефіцитним ресурсом. Користувачі змагаються за місця в блоках. Ринок комісій базується на доступному просторі блоків. Дефіцитним ресурсом в мережі Lightning є ліквідність каналів (кількість коштів, доступних для маршрутизації через канали), і з'єднанність каналів між собою (скільки і наскільки добре з'єднаних нод є досяжними до ваших каналів). Користувачі Lightning конкурують між собою за місткість та з'єднаність, і тому ринок комісій Lightning керується місткістю та з'єднаністю.
 
-The scarce resource on the Bitcoin network is the space in the blocks. Bitcoin users compete for block space. And the Bitcoin fee market is based on available block space. The scarce resource in the Lightning network is the channel liquidity (capacity of funds available for routing in channels) and channel connectivity (how many and well connected nodes your channels can reach). Lightning users compete for capacity and connectivity and therefore the Lightning fee market is driven by capacity and connectivity.
+У Lightning Network користувачі платять комісію тим, хто маршрутизує їх платежі. Маршрутизація платежу в економічному сенсі - це не що інше, як надання та присвоєння місткості відправнику. Звичайно, маршрутизуючі ноди, які беруть меншу плату за однакову ємність, будуть більш привабливими для проходження платежів. Таким чином, існує ринок плати, де маршрутизуючі ноди конкурують між собою за збори, які вони беруть за маршрутизацію платежів по своїм каналам.
 
-On the Lightning Network, users are paying fees to the users routing their payments. Routing a payment, in economic terms, is nothing more than providing and assigning capacity to the sender. Naturally, routers who charge lower fees for the same capacity will be more attractive to route through. Thus a fee market exists where routers are in competition with each other over the fees they charge to route payments through their channels.
+==== Публічні Біткоїн-Транзакції vs Приватні Lightning-Платежі
 
-==== Public Bitcoin Transactions vs Private Lightning Payments
+У мережі Біткоїн кожна транзакція опублікована у блокчейні. Хоча адреси псевдонімні і, як правило, не прив’язані до особи, кожен користувач мережі бачить і перевіряє всі транзакції.
+Крім того, компанії, що стежать за блокчейном, збирають та масово аналізують ці дані та продають їх зацікавленим сторонам, таким як приватні фірми, уряди та спецслужби.
 
-On the Bitcoin network, every transaction is publicly visible on the Bitcoin blockchain. While the addresses involved are pseudonymous and are not typically tied to identity, they are still seen and validated by every other user on the network.
-In addition, blockchain surveillance companies collect and analyze this data en-masse and sell it to interested parties such as private firms, governments and intelligence agencies.
+Натомість платежі Lightning Network є майже повністю приватними. Зазвичай лише відправник та одержувач повністю знають про джерело, отримувача та суму окремо взятого платежу. Більш того, одержувач може навіть не знати джерела платежу. Оскільки платежі здійснюються методом цибулевої маршрутизації, користувачі, які маршрутизують платіж, знають лише про суму платежу, але не можуть встановити ні відправника, ні отримувача.
 
-Lightning Network payments, on the other hand, are almost completely private. Typically only the sender and the recipient are fully aware of the source, destination, and amount transacted in a particular payment. Furthermore, the receiver may not even know the source of the payment. As payments are onion-routed, the users who route the payment are only aware of the amount of the payment, but can neither determine the source nor the destination.
+Таким чином, Біткоїн-транзакції транслюються публічно та зберігаються назавжди. Lightning-платежі виконуються кількома вибраними пірами, і інформація про них зберігається приватно і лише до закриття каналу. Створення засобів масового спостереження та аналізу, еквівалентних тим, що використовуються у Біткоїн-мережі, буде неможливим на Lightning.
 
-In summary, Bitcoin transactions are broadcast publicly and stored forever. Lightning payments are executed between a few selected peers and information about them is privately stored and only until the channel is closed. Creating mass surveillance and analysis tools equivalent to those used on Bitcoin will be impossible on Lightning.
+==== Очікування Підтвердження vs Миттєвий Розрахунок
 
-==== Waiting for Confirmations vs Instant Settlement
+У Біткоїн-мережі транзакції вважаються завершеними лише після включення їх в блок. В цьому випадку кажуть, що транзакція «підтверджена» у відповідному блоці. По мірі видобування наступних блоків транзакція отримує більше "підтверджень" і вважається більш безпечною.
 
-On the Bitcoin network, transactions are only settled once they have been included in a block, in which case they are said to be "confirmed" in that block. As more blocks are mined, the transaction acquires more "confirmations" and is considered more secure.
+У Lightning Network підтвердження мають значення лише для відкриття та закриття каналів on-chain. Як тільки транзакція фінансування отримує відповідну кількість підтверджень (наприклад, 3), партнери по каналу вважають канал відкритим. Оскільки біткоїни в каналі управляються смарт-контрактом, платежі завершуються _моментально_ після отримання кінцевим одержувачем.
+На практиці миттєве завершення платежу означає, що для здійснення та завершення платежу потрібно лише кілька секунд. Як і у випадку з Біткоїном, платежі Lightning не є оборотними.
 
-On the Lightning Network, confirmations only matter for opening and closing channels on-chain. Once a funding transaction has reached a suitable number of confirmations (e.g. 3), the channel partners consider the channel open. As the bitcoin in the channel is secured by a smart contract that manages that channel, payments settle _instantly_ once received by the final recipient.
-In practical terms, instant settlement means that payments take only a few seconds to execute and settle. As with Bitcoin, Lightning payments are not reversible.
+Нарешті, при закритті каналу в мережі Біткоїн здійснюється транзакція, після підтвердження якої, канал вважається закритим.
 
-Finally, when the channel is closed, a transaction is made on the Bitcoin network and once that transaction is confirmed the channel is considered closed.
+==== Відправлення Довільних Сум vs Обмеження Місткості
 
-==== Sending Arbitrary Amounts vs Capacity Restrictions
+У Біткоїн-мережі користувач може без обмежень відправити будь-яку кількість своїх біткоїнів іншому користувачеві. Теоретично, однією транзакцією можна відправити до 21 мільйона біткоїнів.
 
-On the Bitcoin network, a user can send any amount of bitcoin that they own to another user, without capacity restrictions. A single transaction can theoretically send up to 21 million bitcoin as a payment.
+У Lightning Network користувач може надіслати партнеру по каналу лише ту суму біткоїнів, скільки зараз є на його боці в цьому каналі. Наприклад, якщо користувач володіє одним каналом з 0,4 BTC на його боці, і іншим каналом з 0,2 BTC на його боці, то він може надіслати одним платежем максимум 0,4 BTC. Це справедливо незалежно від того, скільки біткоїнів користувач має у своєму Біткоїн-гаманці.
 
-On the Lightning Network, a user can only send as much bitcoin as currently exists on their side of a particular channel to a channel partner. For instance, if a user owns one channel with 0.4 BTC on their side, and another channel with 0.2 BTC on their side, then the maximum they can send with one payment is 0.4 BTC. This is true regardless of how much bitcoin the user currently has in their Bitcoin wallet.
+Атомарні Мульти-Шляхові Платежі (Atomic Multi-Path Payments, AMP) - це фіча, яка дозволяє користувачу з вищенаведеного прикладу скомбінувати обидва канали на суми 0.4 BTC і 0.2 BTC, щоб відправити сумарно 0.6 BTC одним платежем. AMP-и на даний момент тестуються у Lightning Network, і очікується, що будуть широко використовуватись, коли ця книга буде завершена. Більш детально про AMP-и: <<atomic_multipath_payments>>.
 
-Atomic Multi-Path Payments (AMPs) is a feature which, in the above example, allows the user to combine both their 0.4 BTC and 0.2 BTC channels to send a maximum of 0.6 BTC with one payment. AMPs are currently being tested across the Lightning Network, and are expected to be widely available and used by the time this book is completed. For more detail on AMPs, see <<atomic_multipath_payments>>.
+Якщо платіж маршрутизується, то кожна нода на шляху повинна мати канали з місткістю не менше суми платежу, що маршрутизується. Ця умова має виконуватися для кожного каналу, через який маршрутизується платіж. Пропускна здатність каналу найменшої місткості на шляху встановлює верхню межу пропускної здатності всього шляху.
 
-If the payment is routed, every routing node along the routing path must have channels with capacity at least the same as the payment amount being routed. This must hold true for every single channel that the payment is routed through. The capacity of the lowest-capacity channel in a path sets the upper limit for the capacity of the entire path.
+Отже, місткість та з'єднаність є критичними та дефіцитними ресурсами в мережі Lightning.
 
-Hence, capacity and connectivity are critical and scarce resources in the Lightning network.
+==== Стимулювання Платежів на Великі Суми vs Платежі на Малі Суми
 
-==== Incentives for Large Value Payment vs. Small Value Payments
+Комісія в Біткоїн не залежить від суми, що надсилається у транзакції.
+Транзакція на мільйон доларів має таку ж комісію, як і транзакція на 1 долар, якщо розміри цих транзакцій в байтах однакові.
+У Lightning комісія складається із фіксованої величини плюс відсоток від суми транзакції.
+Тому в Lightning комісія зростає із збільшенням суми платежу.
+Ці різні структури комісій створюють різні стимули та призводять до різного використання мереж в залежності від суми транзакції.
+Транзакція на більшу суму буде дешевша в мережі Біткоїн, а отже, користувачі віддадуть перевагу Біткоїн-мережі для транзакцій на великі суми. А для транзакцій на невеликі суми користувачі віддадуть перевагу Lightning.
 
-The fee structure in Bitcoin is independent of the transaction value.
-A $1 million transaction has the same fee as a $1 transaction on Bitcoin, assuming similar transaction size in bytes.
-In Lightning the fee is a fixed base fee plus a percentage of the transaction value.
-Therefore, in Lightning the payment fee increases with payment value.
-These opposing fee structures create different incentives and lead to different usage in regards to transaction value.
-A transaction of greater value will be cheaper on Bitcoin and hence users will prefer Bitcoin for large value transactions. Similarly, on the other end of the scale, users will prefer Lightning for small value transactions.
+==== Використання Блокчейну в якості Книги Обліку vs в якості Судової Системи
 
-==== Using the Blockchain as a Ledger vs as a Court System
+У мережі Біткоїн, кожна транзакція врешті-решт записується в блок.
+Таким чином, блокчейн формує повну історію кожної транзакції з моменту створення Біткоїна і надає спосіб повного аудиту кожного існуючого біткоїна.
+Як тільки транзакція включена в блокчейн, вона стає остаточною.
+Таким чином, не може виникнути жодних суперечок щодо того, скільки біткоїнів контролюється певною адресою в певній точці блокчейну.
 
-On the Bitcoin Network, every transaction is eventually recorded in a block on the blockchain.
-The blockchain thus forms a complete history of every transaction since Bitcoin's creation, and a way to fully audit every bitcoin in existence.
-Once a transaction is included in the blockchain it is final.
-Thus, no disputes can arise and it is unambiguous how much bitcoin is controlled by a particular address at a particular point in the blockchain.
+У Lightning Network баланс біткоїнів в каналі у визначений час відомий лише двом партнерам по каналу і стає видимим для решти мережі тільки коли канал закривається.
+Коли канал закрито, кінцевий баланс каналу оприлюднюється в блокчейні, і кожен партнер отримує свою частку біткоїнів в цьому каналі.
+Наприклад, якщо при відкритті каналу на балансі у Аліси було 1 BTC, Аліса відправила 0.3 BTC Бобу, то остаточний баланс каналу становить 0.7 BTC у Аліси і 0.3 BTC у Боба.
+Якщо Аліса вдається до шахрайства, оприлюднюючи в блокчейн стан каналу на момент його відкриття, коли баланс Аліси складав 1 BTC, а баланс Боба - 0 BTC, то Боб може покарати Алісу, оприлюднивши справжній кінцевий стан каналу, а також створити штрафну транзакцію, яка віддасть йому всі біткоїни в каналі.
+Для Lightning-мережі Біткоїн-блокчейн діє як судова система.
+Біткоїн, як робот-суддя, реєструє початковий та кінцевий баланс кожного каналу та затверджує штрафи на той випадок, якщо одна зі сторін намагається вдатися до шахрайства.
 
-On the Lightning Network, the balance in a channel at a particular time is known only to the two channel partners, and is only made visible to the rest of the network when the channel is closed.
-When the channel is closed, the final balance of the channel is submitted to the Bitcoin blockchain, and each partner receives their share of the bitcoin in that channel.
-For instance, if the opening balance was 1 BTC paid by Alice, and Alice made a payment of 0.3 BTC to Bob, then the final balance of the channel is 0.7 BTC for Alice and 0.3 BTC for Bob.
-If Alice tries to cheat by submitting the opening state of the channel to the Bitcoin blockchain, with 1 BTC for Alice and 0 BTC for Bob, then Bob can retaliate by submitting the true final state of the channel, as well as create a penalty transaction that gives him all bitcoin in the channel.
-For the Lightning network, the Bitcoin blockchain acts as a court system.
-Like a robotic judge, Bitcoin records the initial and final balances of each channel, and approves penalties if one of the parties tries to cheat.
+==== Оффлайн vs Онлайн, Асинхронність vs Синхронність
 
-==== Offline vs Online, Asynchronous vs Synchronous
+Коли користувач мережі Біткоїн надсилає кошти на адресу призначення, йому не потрібно нічого знати про одержувача. Одержувач може бути як в режимі офлайн, так і онлайн, для цього не потрібно жодної взаємодії між відправником та одержувачем. Взаємодія відбувається між відправником та блокчейном Біткоїн. Отримання біткоїнів у блокчейні - це _пасивна_ і _асинхронна_ дія, яка не вимагає будь-якої взаємодії з одержувачем або необхідності перебування одержувача онлайн в будь-який час. Біткоїн-адреси можна навіть генерувати оффлайн і ніколи не «реєструвати» в мережі Біткоїн. Тільки витрата біткоїнів вимагає взаємодії.
 
-When a Bitcoin user sends funds to a destination address he does not need to know anything about the recipient. The recipient might be offline or online, and no interaction between sender and recipient is needed. The interaction is between sender and the Bitcoin blockchain. Receiving bitcoin on the Bitcoin blockchain is a _passive_ and _asynchronous_ activity that does not require any interaction by the recipient, or for the recipient to be online at any time. Bitcoin addresses can even be generated offline and are never "registered" with the Bitcoin network. Only spending bitcoin requires interaction.
+У Lightning отримувач повинен бути "онлайн", щоб платіж було здійснено перед тим, як скінчиться його строк дії.
+Одержувач повинен мати запущену ноду або мати когось, хто запустить ноду замість нього (сторонній кастодіальний сервіс). Точніше кажучи, обидві ноди відправника та одержувача повинні бути онлайн під час здійснення платежу та координувати між собою діяльність. Отримання платежу Lightning - це _активний_ та _синхронний_ процес за участі відправника та одержувача, але без участі більшої частини мережі Lightning або мережі Біткоїн (за винятком посередницьких нод маршрутизації, якщо такі є).
 
-In Lightning, the recipient must be "online" in order to complete the payment before it expires.
-The recipient must run a node or have someone that runs a node on their behalf (a third-party custodian). To be precise, both nodes, the sender's and the recipient's must be online at the time of payment and must coordinate. Receiving a Lightning payment is an _active_ and _synchronous_ activity between sender and recipient, without the participation of most of the Lightning network or the Bitcoin network (except for the intermediary routing nodes, if any).
+Синхронна та онлайнова природа мережі Lightning мабуть становить найбільшу різницю в користувацькому досвіді і часто бентежить користувачів, які звикли до Біткоїна.
 
-The synchronous and always-online nature of the Lightning network is probably the biggest difference in the user experience and often confounds users who are accustomed to Bitcoin.
+==== Сатоші vs мілі-сатоші
 
-==== Satoshis vs. milli-satoshis
+В Біткоїні найменша неділима сума - це _сатоші_. Lightning в цьому плані ще більш гнучка система, адже ноди Lightning працюють з _мілі-сатоші_ (тисячна доля сатоші). Це дозволяє надсилати через Lightning зовсім крихітні платежі. Через платіжний канал може бути надісланий платіж на суму в мілі-сатоші, платежі з настільки малою сумою слід характеризувати як _наноплатіж_.
 
-On Bitcoin the smallest amount is a _satoshi_ which cannot be divided any further. Lightning is a bit more flexible, and Lightning nodes work with _milli-satoshis_ (thousandths of a satoshi). This allows tiny payments to be sent via Lightning. A single milli-satoshi payment can be sent across a payment channel, an amount so small it should properly be characterized as a _nanopayment_.
+Звісно, мілі-сатоші неможливо записати у блокчейні. Після закриття каналу залишки округлюються до сатоші. Але протягом життя каналу можуть бути мільйони наноплатежів на суми, вимірювані у мілі-сатоші. Lightning Network пробиває бар’єр мікроплатежів.
 
-The milli-satoshi unit cannot, of course, be settled on the Bitcoin blockchain at that granularity. Upon channel closure, balances are rounded to the nearest satoshi. But over the lifetime of a channel, millions of nanopayments are possible at milli-satoshi levels. The Lightning network breaks throught the micropayment barrier.
+=== Спільне між Біткоїн та Lightning
 
-=== Commonality of Bitcoin and Lightning
+==== Грошова Одиниця
 
-==== Monetary Unit
+І мережа Біткоїн, і мережа Lightning використовують спільну грошову одиницю - біткоїн. У Lightning-платежах використовуються ті самі біткоїни, що і у біткоїн-транзакціях. Як наслідок, оскільки грошова одиниця однакова, то і ліміт грошей також однаковий: 21 мільйон біткоїнів. Із 21 мільйона всіх біткоїнів, деякі вже знаходяться на 2-із-2 мультисиг адресах, що складають платіжні канали в Lightning Network.
 
-Both the Bitcoin network and the Lightning network use the same monetary units: bitcoin. Lightning payments use the very same bitcoin as Bitcoin transactions. As an implication, because the monetary unit is the same, the monetary limit is the same: less than 21 million bitcoin. Of Bitcoin's 21 million total bitcoin, some are already allocated to 2-of-2 multi-signature addresses as part of payment channel on the Lightning Network.
+==== Незворотність і остаточність платежів
 
-==== Irreversibility and finality of payments
+І Біткоїн-транзакції, і Lightning-платежі незворотні і незмінні. Для обох систем не існує можливості "скасування" або "повернення платежу". В обох системах відправник повинен діяти відповідально, а одержувачу гарантується остаточність операцій.
 
-Both Bitcoin transactions and Lightning payments are irreversible and immutable. There is no "undo" operation or "chargeback" for either system. As a sender of either one you have to act responsibly, but also, as a recipient you are guaranteed finality of your transactions.
+==== Довіра та ризик контрагента
 
-==== Trust and counterparty risk
+Так само, як і Біткоїн, Lightning вимагає від користувача лише довіри до математики, шифрування та відсутності критичних помилок у програмному забезпеченні. Ні Біткоїн, ні Lightning не вимагають від користувача довіри до особи, компанії, установи чи уряду.
+Оскільки Lightning працює поверх Біткоїна і покладається на Біткоїн як на нижележачий базовий рівень, очевидно, що модель безпеки Lightning зводиться до безпеки Біткоїна. Це означає, що Lightning пропонує в більшості випадків таку ж безпеку, як і Біткоїн, із незначним зниженням рівня безпеки лише за деяких обмежених обставин.
 
-Just as Bitcoin, Lightning requires the user only to trust mathematics, encryption, and that the software does not have any critical bugs. Neither Bitcoin nor Lightning require the user to trust a person, a company, an institution, or a government.
-Since Lightning sits on top of Bitcoin and relies on Bitcoin as its underlying base layer, it is clear that the security model of Lightning reduces to the security of Bitcoin. This means that Lightning offers broadly the same security as Bitcoin under most circumstances, with only a slight reduction in security under some narrow circumstances.
+==== Операції, що не потребують дозволу
 
-==== Permissionless operation
+І Біткоїн, і Lightning може використовувати кожен, хто має доступ до Інтернету та підходяще програмне забезпечення (нода і гаманець).
+Жодна із цих мереж не вимагає від користувачів отримання дозволу, проходження перевірки або авторизації від сторонніх осіб, компаній, установ чи уряду. Уряди в межах своєї юрисдикції можуть оголосоти Біткоїн або Lightning поза законом, але вони не здатні перешкодити їх глобальному використанню.
 
-Both Bitcoin and Lightning can be used by anybody with access to the Internet and to the appropriate software, e.g. node and wallet.
-Neither network requires users to get permission, vetting, or authorization from third-parties, companies, institutions or a government. Governments can outlaw Bitcoin or Lightning within their jurisdiction, but cannot prevent their global use.
+==== Відкритий код і відкрита система
 
-==== Open source and open system
+І Біткоїн, і Lightning - це програмні системи з відкритим кодом, побудовані децентралізованою світовою спільнотою добровольців, доступні за відкритими ліцензіями. Обидві базуються на відкритих та сумісних протоколах, що функціонують як відкриті системи та відкриті мережі. Глобальні, відкриті та вільні.
 
-Both, Bitcoin and Lightning are open-source software systems built by a decentralized global community of volunteers, available under open licenses. Both are based on open and interoperable protocols, which operate as open systems and open networks. Global, open and free.
+=== Висновок
 
-=== Conclusion
+У цьому розділі ми розглянули, як насправді працює мережа Lightning та всі її складові частини. Ми розглянули кожен крок побудови, використання та закриття каналу. Ми розібрались, як маршрутизуються платежі. Нарешті ми порівняли Lightning та Біткоїн та проаналізували їх відмінності та спільні якості.
 
-In this chapter we looked at how the Lightning network actually works and all of the constituent components. We examined each step in constructing, operating and closing a channel. We looked at how payments are routed. Finally we compared Lightinng and Bitcoin and analyzed their differences and commonalities.
-
-In the next several chapters we will revisit all these topics, but in much more detail.
+У наступних кількох главах ми переглянемо всі ці теми, але набагато детальніше.
