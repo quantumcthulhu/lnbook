@@ -1,4 +1,4 @@
-# Освоєння Lightning Network
+# Освоєння Lightning Network. Український переклад
 
 [![Build Status](https://travis-ci.com/lnbook/lnbook.svg?branch=develop)](https://travis-ci.com/lnbook/lnbook)
 
