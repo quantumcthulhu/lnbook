@@ -44,7 +44,6 @@
 | [LN's Future]() | # | :thought_balloon: |
 
 
-
 Total Word Count: 81432
 
 ## Контрибуції

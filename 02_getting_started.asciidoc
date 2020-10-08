@@ -256,6 +256,12 @@ image:images/bitcoin-atm-receive.png[]
 ====
 
 
+[TIP]
+====
+The number of "confirmations" on a transaction is the number of blocks mined since (and inclusive) the block that contained that transaction. Six confirmation is a best practice, but different Lightning wallets can consider a channel open after any number of confirmations. Some wallets even scale up the number of expected confirmations by the monetary value of the channel.
+====
+
+
 [[eclair-tx1]]
 .Аліса отримує біткоїни
 image:images/eclair-tx1-btc.png[]
