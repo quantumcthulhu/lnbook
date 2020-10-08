@@ -26,21 +26,26 @@
 | Секція | Довжина (Кількість Слів) |  Стан |  Перекладено |
 |-------|------|:------:|:------:|
 | [Preface and Acknowledgments](preface.asciidoc) | ### | :arrows_clockwise: |
-| [Glossary](glossary.asciidoc) | ############# | :arrows_clockwise: |
-| [Вступ](01_introduction.asciidoc) | ##### | :mag: | 100% |
-| [Починаємо](02_getting_started.asciidoc) | ########### | :mag: | 100% |
-| [Основи LN (Як працює LN)](03_how_ln_works.asciidoc) | ########################## | :mag: | 100% |
-| [Intro to LN Routing (HTLCs)](routing.asciidoc) | ###################### | :lock_with_ink_pen: |
+| [Glossary](glossary.asciidoc) | ############## | :arrows_clockwise: |
+| [Вступ](01_introduction.asciidoc) | ###### | :mag: | 100% |
+| [Починаємо](02_getting_started.asciidoc) | ############ | :mag: | 100% |
+| [Основи LN (Як працює LN)](03_how_ln_works.asciidoc) | ########################### | :mag: | 100% |
 | [Nodes (LN Clients)](node_client.asciidoc) | #################### | :mag: |
-| [Operating a Node](node_operations.asciidoc) | ################# | :bookmark_tabs: |
-| [P2P Communication](p2p.asciidoc) | # | :bookmark_tabs: |
-| [Channel Construction in Detail](channel-construction.asciidoc) | ######### | :lock_with_ink_pen: |
-| [Channel Graph and Gossip Layer](channel-graph.asciidoc) | # | :bookmark_tabs: |
+| [Operating a Node](node_operations.asciidoc) | ############################ | :bookmark_tabs: |
+| PART 2 | PART 2 | PART2 |
+| [Intro to LN Routing (HTLCs)](routing.asciidoc) | ##################### | :lock_with_ink_pen: |
+| [Channel Construction in Detail](channel-construction.asciidoc) | ########## | :lock_with_ink_pen: |
+| [Channel operation with HTLCs and Statemachine](channel-operation.asciidoc) | ###### | :lock_with_ink_pen: |
 | [Payment Path Finding](path-finding.asciidoc) | ############## | :bookmark_tabs: |
-| [End-to-End Payment Presentation Layer](e2e-presentation-layer.asciidoc) | ## | :bookmark_tabs: |
+| [P2P Communication](p2p.asciidoc) | # | :bookmark_tabs: |
+| [Channel Graph and Gossip Layer](channel-graph.asciidoc) | ### | :bookmark_tabs: |
+| [End-to-End Payment Presentation Layer](e2e-presentation-layer.asciidoc) | ### | :bookmark_tabs: |
 | [Lightning Applications (LApps)]() | # | :thought_balloon: |
 | [LN's Future]() | # | :thought_balloon: |
 
+
+
+Total Word Count: 81432
 
 ## Контрибуції
 
