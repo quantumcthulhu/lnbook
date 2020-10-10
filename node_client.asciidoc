@@ -1,21 +1,21 @@
 [[set_up_a_lightning_node]]
-== Lightning Node Software
+== Софт для нод Lightning
 
-As we have seen in previous chapters, a Lightning node is a computer system that participates in the Lightning Network. The Lightning Network is not a product or company, it is a set of open standards that define a baseline for interoperability. As such, Lightning node software has been built by a variety of companies and community groups. The vast majority of Lightning software is _open source_, meaning that the source code is open and licensed in such as way as to enable collaboration, sharing and community participation in the development process. Similarly, the Lightning node implementations we will present in this chapter are all open source and collaborative developed.
+Як ми побачили в попередніх розділах, нода Lightning - це комп’ютерна система, яка бере участь у мережі Lightning. Мережа Lightning - це не продукт чи компанія, це набір відкритих стандартів, які визначають основную лінію взаємодії. Тому програмне забезпечення для Lightning-нод розробляється різними компаніями та спільнотами. Переважна більшість софту для Lightning - з _відкритим кодом_, тобто має відкритий вихідний код і таку ліцензію, що дозволяє співпрацю, спільний доступ та участь спільноти в процесі розробки. Так само і реалізації нод Lightning, які ми представимо в цьому розділі, мають відкритий код і розроблені спільними зусиллями.
 
-Unlike Bitcoin, where the standard is defined by a _reference implementation_ in software (Bitcoin Core), in Lightning the standard is defined by a series of standards documents called _Basis of Lightning Technology (BOLT)_, found at the _lightning-rfc_ repository at:
+На відміну від Біткоїна, де стандарт визначається _еталонною реалізацією_ в програмному забезпеченні (Bitcoin Core), у Lightning стандарт визначається низкою документів, що називаються _Basis of Lightning Technology (BOLT)_ і знаходяться у репозиторії _lightning-rfc_ за адресою:
 
 https://github.com/lightningnetwork/lightning-rfc
 
-There is no reference implementation of the Lightning Network, but there are several competing, BOLT-compliant and interoperable implementations developed by different teams and organizations. The teams that develop software for the Lightning Network also contribute in the development and evolution of the BOLT standards.
+Не існує еталонної реалізації Lightning Network, але є декілька конкуруючих, сумісних з BOLT та інтероперабільних реалізацій, розроблених різними командами та організаціями. Команди, які розробляють програмне забезпечення для Lightning Network, також роблять свій внесок у розробку та еволюцію стандартів BOLT.
 
-Another major difference between Lightning node software and Bitcoin node software is that Lightning nodes do not need to operate in "lockstep" with consensus rules and can have extended functionality beyond the baseline of the BOLTS. Therefore, different teams may pursue various experimental features that, if successful and broadly deployed, may become part of the BOLTs later.
+Інша велика відмінність між програмним забезпеченням нод Lightning та  нод Біткоїн полягає в тому, що ноди Lightning не мають йти в ногу з правилами консенсусу і можуть мати розширену функціональність за рамками BOLT. Тому різні команди можуть застосовувати різні експериментальні фічі, які пізніше в разі успіху та широкого використання можуть стати частиною BOLT.
 
-In this chapter you will learn how to set up each of the software packages for the most popular Lightning node implementations. We've presented them in alphabetical order to emphasize that we generally do not prefer or endorse one over the other. Each has its strengths and weaknesses and choosing one will depend on a variety of factors. Since they are developed in different programming languages (e.g. Go, C, etc.) your choice may also depend on your level of familiarity and expertise with a specific language and development toolset.
+У цьому розділі ви дізнаєтесь, як налаштувати кожний з програмних пакетів для найпопулярніших реалізацій ноди Lightning. Ми подали їх в алфавітному порядку, щоб підкреслити, що ми взагалі не надаємо якомусь із них перевагу над іншим. Кожен із них має свої сильні та слабкі сторони, і вибір програмного пакету буде залежати від різних факторів. Оскільки вони розроблені на різних мовах програмування (наприклад Go, C і т.д.), ваш вибір також може залежати від рівня обізнаності в певній мові та інструментах розробки.
 
-=== Lightning Development Environment
+=== Середовище Розробки Lightning
 
-((("development environment", "setup")))If you're a developer, you will want to set up a development environment with all the tools, libraries, and support software for writing and running Lightning software. In this highly technical chapter, we'll walk through that process step-by-step. If the material becomes too dense or you're not actually setting up a development environment, then feel free to skip to the next chapter, which is less technical.
+((("development environment", "setup")))Якщо ви розробник, то захочете створити середовище розробки з усіма інструментами, бібліотеками та іншим софтом для написання та запуску софту Lightning. У цій дуже технічній главі ми пройдемося по цьому процесу крок за кроком. Якщо матеріал видається занадто глибоким або ви не бажаєте налаштовувати середовище розробки, сміливо переходьте до наступної менш технічної глави.
 
 ==== Using the command-line
 

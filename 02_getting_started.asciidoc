@@ -250,17 +250,10 @@ image:images/bitcoin-atm-receive.png[]
 
 [TIP]
 ====
-Кількість "підтверджень" транзакції - це кількість блоків, змайнених після блоку (включно з ним), в якому знаходиться ця транзакція. 
+Кількість "підтверджень" транзакції - це кількість блоків, змайнених після блоку (включно), в якому знаходиться ця транзакція. 
 Шість підтверджень - це найкраща практика, але різні Lightning-гаманці можуть вважати канал відкритим після будь-якої кількості підтверджень.
-Деякі гаманці навіть збільшують необхідну кількість підтверджень заоежно від кількості коштів в каналі.
+Деякі гаманці навіть збільшують необхідну кількість підтверджень залежно від кількості коштів в каналі.
 ====
-
-
-[TIP]
-====
-The number of "confirmations" on a transaction is the number of blocks mined since (and inclusive) the block that contained that transaction. Six confirmation is a best practice, but different Lightning wallets can consider a channel open after any number of confirmations. Some wallets even scale up the number of expected confirmations by the monetary value of the channel.
-====
-
 
 [[eclair-tx1]]
 .Аліса отримує біткоїни
