@@ -192,19 +192,19 @@ docker ps
 
 Цих основних команд docker вистачить для початку, вони дозволять вам запустити всі приклади з цього розділу. Давайте розглянемо їх у дії в наступних розділах.
 
-=== Bitcoin Core and Regtest
+=== Bitcoin Core і Regtest
 
-Most of the Lightning node implementations need access to a full Bitcoin node in order to work.
+Для роботи більшості реалізацій Lightning-нод потрібен доступ до повної ноди Біткоїн.
 
-Installing a full Bitcoin node and synching the Bitcoin blockchain is outside the scope of this book and is a relatively complex endeavor in itself. If you want to try it, refer to _Mastering Bitcoin_ (https://github.com/bitcoinbook/bitcoinbook), "Chapter 3: Bitcoin Core: The Reference Implementation" which discusses the installation and operation of a Bitcoin node.
+Встановлення повної Біткоїн-ноди та синхронізація блокчейну Біткоїну виходить за рамки цієї книги і само по собі є відносно складною справою. Якщо ви хочете спробувати, зверніться до _Mastering Bitcoin_ (https://github.com/bitcoinbook/bitcoinbook), "Chapter 3: Bitcoin Core: The Reference Implementation", де обговорюється встановлення та робота ноди Біткоїн.
 
-A Bitcoin node can be operated in _regtest_ mode, where the node creates a local simulated Bitcoin blockchain for testing purposes. In the following examples we will be using the +regtest+ mode to allow us to demonstrate Lightning without having to synchronize a Bitcoin node or risk any funds.
+Нода Біткоїн здатна працювати в режимі _regtest_, при якому нода локально створює тестову симуляцію блокчейна Біткоїна. У наступних прикладах ми будемо використовувати режим +regtest+, що дозволить нам продемонструвати Lightning без необхідності мати синхронізовану Біткоїн-ноду і без потреби ризикувати будь-якими коштами.
 
-The container for Bitcoin Core is +bitcoind+. It is configured to run Bitcoin Core in +regtest+ mode and to mine a new block every 10 seconds. Its RPC port is exposed on port 18443 and accessible for RPC calls with the username +regtest+ and the password +regtest+. You can also access it with an interactive shell and run +bitcoin-cli+ commands locally.
+Контейнером для Bitcoin Core є +bitcoind+. Він налаштований на запуск Bitcoin Core в режимі +regtest+ та майнинг нового блоку кожні 10 секунд. RPC знаходиться на порту 18443, ім'я користувача +regtest+, пароль +regtest+. Також ви можете отримати доступ до RPC за допомогою інтерактивного шеллу та запускати команди +bitcoin-cli+ локально.
 
-===== Building the Bitcoin Core Container
+===== Побудова контейнера Bitcoin Core
 
-Let us start by building and running the +bitcoind+ container. First, we use the +docker build+ command to build it:
+Почнемо з побудови та запуску контейнера +bitcoind+. Спочатку виконаємо команду +docker build+:
 
 ----
 $ cd code/docker
@@ -223,9 +223,9 @@ Successfully built 758051998e72
 Successfully tagged lnbook/bitcoind:latest
 ----
 
-===== Running the Bitcoin Core Container
+===== Запуск контейнера Bitcoin Core
 
-Next, let's run the +bitcoind+ container and have it mine some blocks. We use the +docker run+ command, with the flags for _interactive (i)_ and _terminal (t)_, and the +name+ argument to give the running container a custom name:
+Далі запустимо контейнер +bitcoind+ і дозволимо йому змайнити кілька блоків. Ми використовуємо команду +docker run+ із флагами _interactive (i)_ та _terminal (t)_, а також аргументом +name+, щоб надати запущеному контейнеру власне ім'я:
 
 ----
 $ docker run -it --name bitcoind lnbook/bitcoind
@@ -251,13 +251,13 @@ Mining 1 block every 10 seconds
 Balance: 100.00000000
 ----
 
-As you can see, bitcoind starts up and mines 101 simulated blocks to get the chain started. This is because under the bitcoin consensus rules, newly mined bitcoin is not spendable until 100 blocks have elapsed. By mining 101 blocks, we make the first block's coinbase spendable. After that initial mining activity, a new block is mined every 10 seconds to keep the chain moving forward.
+Як бачимо, bitcoind запускається і майнить 101 блок. Це пов’язано із тим, що згідно правил консенсусу Біткоїна, щойно видобуті біткоїни не можуть бути витрачені, поки не пройде 100 блоків. Змайнивши 101-ший блок, стає можливим витратити біткоїни, створені у блоці 1. Після цього початкового майнингу новий блок буде майнитись кожні 10 секунд.
 
-For now, there are no transactions. But we have some test bitcoin that has been mined in the wallet and is available to spend. When we connect some Lightning nodes to this chain, we will send some bitcoin to their wallets so that we can open some Lightning channels between the Lightning nodes.
+На даний момент транзакцій немає (прим.перекл.: окрім coinbase-транзакцій). Але у нас в гаманці є кілька змайнених тестових біткоїнів, які ми можемо витратити. Коли ми підключимо декілька Lightning-нод, ми відправимо до їх гаманців трохи біткоїнів, щоб потім відкрити декілька платіжних каналів між цими Lightning-нодами.
 
-===== Interacting with the Bitcoin Core Container
+===== Взаємодія з контейнером Bitcoin Core
 
-In the mean time, we can also interact with the +bitcoind+ container by sending it shell commands. The container is sending a log file to the terminal, displaying the mining process of the bitcoind process. To interact with the shell we can issue commands in another terminal, using the +docker exec+ command. Since we previously named the running container with the +name+ argument, we can refer to it by that name when we run the +docker exec+ command. First, let's run an interactive +bash+ shell:
+Ми також можемо взаємодіяти з контейнером +bitcoind+, надсилаючи йому команди шеллу. Контейнер надсилає лог-файл в термінал, відображаючи процес майнингу, що відбувається у bitcoind. Для взаємодії з шеллом ми можемо писати команди в іншому терміналі, використовуючи команду +docker exec+. Оскільки раніше ми дали назву запущеному контейнеру за допомогою аргумента +name+, то ми можемо посилатися на нього за цим ім'ям, коли запускаємо команду +docker exec+. Запустимо спочатку інтерактивний шелл +bash+:
 
 ----
 $ docker exec -it bitcoind /bin/bash
@@ -271,9 +271,9 @@ root@e027fd56e31a:/bitcoind# ps x
 root@e027fd56e31a:/bitcoind#
 ----
 
-Running the interactive shell puts us "inside" the container. It logs in as user +root+, as we can see from the prefix +root@+ in the new shell prompt +root@e027fd56e31a:/bitcoind#+. If we issue the +ps x+ command to see what processes are running, we see both +bitcoind+ and the script +mine.sh+ are running in the background. To exit this shell, type +CTRL-D+ or +exit+ and you will be returned to your operating system prompt.
+Запуск інтерактивного шеллу пускає нас "всередину" контейнера. Ми логінимось від імени користувача +root+, як видно з префікса +root@+ у підказці нового шеллу: +root@e027fd56e31a:/bitcoind#+. Якщо ми дамо команду +ps x+, то побачимо запущені у бекграунді процеси +bitcoind+ і +mine.sh+. Для виходу із цього шеллу, натисніть +CTRL-D+ або введіть +exit+, і ви повернетесь до шеллу вашої операційної системи.
 
-Instead of running an interactive shell, we can also issue a single command that is executed inside the container. In the following example we run the +bitcoin-cli+ command to obtain information about the current blockchain state:
+Замість запуску інтерактивного шеллу ми також можемо дати команду, яка буде виконана всередині контейнера. У наступному прикладі ми запускаємо команду +bitcoin-cli+, щоб отримати інформацію про поточний стан блокчейну:
 
 ----
 $ docker exec bitcoind bitcoin-cli -datadir=/bitcoind getblockchaininfo
@@ -289,33 +289,32 @@ $ docker exec bitcoind bitcoin-cli -datadir=/bitcoind getblockchaininfo
 $
 ----
 
-As you can see, we need to tell +bitcoin-cli+ where the bitcoind data directory is by using the +datadir+ argument. We can then issue RPC commands to the Bitcoin Core node and get JSON encoded results.
+Як бачите, нам потрібно вказати для +bitcoin-cli+ шлях до каталогу даних bitcoind за допомогою аргументу +datadir+. Потім ми можемо давати ноді Bitcoin Core RPC-команди і отримувати результати їх роботи у форматі JSON.
 
-All our docker containers have a command-line JSON encoder/decoder named +jq+ preinstalled. +jq+ helps us to process JSON-formatted data via the command-line or from inside scripts. You can send the JSON output of any command to +jq+ using the +|+ character. This character as well as this operation is called a "pipe". Let's apply a +pipe+ and +jq+ to the previous command as follows:
+Всі наші docker-контейнери мають попередньо встановлений консольний кодер/декодер JSON під назвою +jq+. +jq+ допомагає нам обробляти дані у форматі JSON у консолі або із скриптів. Ви можете надіслати JSON-вивід будь-якої команди до +jq+, використовуючи символ +|+. Цей символ, а також цю операцію називають пайп ("pipe", що означає "труба"). Давайте застосуємо +пайп+ та +jq+ до попередньої команди наступним чином:
 
 ----
 $ docker exec bitcoind bash -c "bitcoin-cli -datadir=/bitcoind getblockchaininfo | jq .blocks"
 189
 ----
 
-+jq .blocks+ instructs the +jq+ JSON decoder to extract the field +blocks" from the +getblockchaininfo+ result. In our case, it extracts and prints the value of 189 which we could use in a subsequent command.
+Команда +jq .blocks+ вказує JSON-декодеру +jq+ витягнути поле +blocks+ з результату команди +getblockchaininfo+. В нашому випадку вона витягує та друкує значення 189, яке ми можемо використати в наступній команді.
 
-As you will see in the following sections, we can run several containers at the same time and then interact with them individually. We can issue commands to extract information such as the Lightning node public key or to take actions such as opening a Lightning channel to another node. The +docker run+ and +docker exec+ commands together with +jq+ for JSON decoding are all we need to build a working Lightning Network that mixes many different node implementations. This enables us to try out diverse experiments on our own computer.
+Як ви побачите в наступних розділах, ми можемо запускати кілька контейнерів одночасно, а потім взаємодіяти з ними окремо. Ми можемо подавати команди для отримання такої інформації, як відкритий ключ ноди Lightning, або для виконання таких дій, як відкриття каналу до іншої ноди. Команди +docker run+ та +docker exec+ разом із +jq+ для декодування JSON - це все, що нам треба для побудови робочої мережі Lightning, що поєднує різні імплементації нод. Це дозволяє нам провести різноманітні експерименти на власному комп’ютері.
 
-=== The c-lightning Lightning node project
+=== Lightning-нода c-lightning
 
-C-lightning is a lightweight, highly customizable, and standard-compliant implementation of the Lightning Network protocol, developed by Blockstream as part of the Elements project. The project is open source and developed collaboratively on Github:
+C-lightning - це легка, просто настроювана і сумісна зі стандартом реалізація протоколу Lightning Network, розроблена Blockstream в рамках проекту Elements. Проект відкритий і розробляється спільнотою на Github:
 
 https://github.com/ElementsProject/lightning
 
-In the following sections, we will build a docker container that runs a c-lightning node connecting to the bitcoind container we build previously. We will also show you how to configure and build the c-lightning software directly from the source code.
+У наступних розділах ми побудуємо docker-контейнер, який запускає ноду c-lightning, що підключається до створеного раніше контейнера bitcoind. Ми також покажемо, як налаштувати та побудувати c-lightning безпосередньо з вихідного коду.
 
-==== Building c-lightning as a Docker container
+==== Побудова c-lightning як docker-контейнера
 
-The c-lightning software distribution has a docker container, but it is designed for running c-lightning in production systems and along side a bitcoind node. We will be using a somewhat simpler container configured to run c-lightning for demonstration purposes.
+Поставка програмного забезпечення c-lightning має docker-контейнер, але він призначений для запуску c-lightning на "продакшені". Для демонстраційних цілей ми використаємо дещо простіший контейнер, налаштований під c-lightning.
 
-We start by building the c-lightning docker container from the book's files which you previously downloaded into a directory named +lnbook+. As before, we will use the +docker build+ command in the +code/docker+ sub-directory. We will tag the container image with the tag +lnbook/c-lightning+ like this:
-
+Ми починаємо зі створення контейнера докера c-lightning з файлів книги, які ви раніше завантажили в каталог з іменем +lnbook+. Як і раніше, ми будемо використовувати команду +docker build+ у підкаталозі +code/docker+. Ми позначимо контейнер тегом +lnbook/c-lightning+ наступним чином:
 ----
 $ cd code/docker
 $ docker build -t lnbook/c-lightning c-lightning
