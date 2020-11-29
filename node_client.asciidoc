@@ -135,13 +135,13 @@ This message shows that your installation appears to be working correctly.
 
 У цьому розділі ми досить широко використовуємо +docker+. Ми будемо використовувати наступні команди та аргументи +docker+:
 
-*Побудова контейнера*
+*Збірка контейнера*
 
 ----
 docker build [-t tag] [directory]
 ----
 
-...де +tag+ - це ідентифікатор контейнера, який ми будуємо, а +directory+ - це папка, де знаходяться "контекст" контейнера (папки та файли) та файл визначення (+Dockerfile+).
+...де +tag+ - це ідентифікатор контейнера, який ми збираємо, а +directory+ - це папка, де знаходяться "контекст" контейнера (папки та файли) та файл визначення (+Dockerfile+).
 
 *Запуск контейнера*
 
@@ -149,7 +149,7 @@ docker build [-t tag] [directory]
 docker run -it [--network netname] [--name cname] tag
 ----
 
-...де +netname+ - це назва мережі docker, +cname+ - це назва, яку ми даємо цьому екземпляру контейнера, а +tag+ - це тег імені, який ми дали контейнеру при його побудові.
+...де +netname+ - це назва мережі docker, +cname+ - це назва, яку ми даємо цьому екземпляру контейнера, а +tag+ - це тег імені, яке ми дали контейнеру при його зборці.
 
 *Запуск команди в контейнері*
 
@@ -202,9 +202,9 @@ docker ps
 
 Контейнером для Bitcoin Core є +bitcoind+. Він налаштований на запуск Bitcoin Core в режимі +regtest+ та майнинг нового блоку кожні 10 секунд. RPC знаходиться на порту 18443, ім'я користувача +regtest+, пароль +regtest+. Також ви можете отримати доступ до RPC за допомогою інтерактивного шеллу та запускати команди +bitcoin-cli+ локально.
 
-===== Побудова контейнера Bitcoin Core
+===== Збірка контейнера Bitcoin Core
 
-Почнемо з побудови та запуску контейнера +bitcoind+. Спочатку виконаємо команду +docker build+:
+Почнемо з збірки та запуску контейнера +bitcoind+. Спочатку виконаємо команду +docker build+:
 
 ----
 $ cd code/docker
@@ -304,17 +304,17 @@ $ docker exec bitcoind bash -c "bitcoin-cli -datadir=/bitcoind getblockchaininfo
 
 === Lightning-нода c-lightning
 
-C-lightning - це легка, просто настроювана і сумісна зі стандартом реалізація протоколу Lightning Network, розроблена Blockstream в рамках проекту Elements. Проект відкритий і розробляється спільнотою на Github:
+C-lightning - це легка, просто настроювана і сумісна зі стандартом реалізація протоколу Lightning Network, розроблена компанією Blockstream в рамках проекту Elements. Цей проект відкритий і спільно розробляється на Github:
 
 https://github.com/ElementsProject/lightning
 
-У наступних розділах ми побудуємо docker-контейнер, який запускає ноду c-lightning, що підключається до створеного раніше контейнера bitcoind. Ми також покажемо, як налаштувати та побудувати c-lightning безпосередньо з вихідного коду.
+В наступних розділах ми зробимо docker-контейнер з нодою c-lightning, яка підключається до створеного раніше контейнера bitcoind. Ми також покажемо, як налаштувати та зібрати c-lightning безпосередньо з вихідного коду.
 
-==== Побудова c-lightning як docker-контейнера
+==== c-lightning у вигляді docker-контейнера
 
-Поставка програмного забезпечення c-lightning має docker-контейнер, але він призначений для запуску c-lightning на "продакшені". Для демонстраційних цілей ми використаємо дещо простіший контейнер, налаштований під c-lightning.
+Поставка програмного забезпечення c-lightning має свій docker-контейнер, але він призначений для запуску c-lightning "на продакшені". Для демонстраційних цілей ми використаємо дещо простіший контейнер c-lightning.
 
-Ми починаємо зі створення контейнера докера c-lightning з файлів книги, які ви раніше завантажили в каталог з іменем +lnbook+. Як і раніше, ми будемо використовувати команду +docker build+ у підкаталозі +code/docker+. Ми позначимо контейнер тегом +lnbook/c-lightning+ наступним чином:
+Почнемо зі створення контейнера докера c-lightning з файлів книги, які ви раніше завантажили в каталог з іменем +lnbook+. Як і раніше, ми будемо використовувати команду +docker build+ у підкаталозі +code/docker+. Позначимо контейнер тегом +lnbook/c-lightning+ наступним чином:
 ----
 $ cd code/docker
 $ docker build -t lnbook/c-lightning c-lightning
@@ -332,16 +332,16 @@ Successfully built e63f5aaa2b16
 Successfully tagged lnbook/c-lightning:latest
 ----
 
-Our container is now built and ready to run. However, before we run the c-lightning container, we need to start the bitcoind container in another terminal as c-lightning depends on bitcoind. We will also need to set up a docker network that allows the containers to connect to each other as if residing on the same local area network.
+Тепер наш контейнер створено і він готовий до роботи. Перед запуском контейнера c-lightning, нам треба запустити контейнер bitcoind в іншому терміналі, оскільки c-lightning залежить від bitcoind. Нам також потрібно буде створити мережу docker, яка дозволяє контейнерам з'єднатись між собою так, ніби вони розташовані в одній локальній мережі.
 
 [TIP]
 ====
-Docker containers can "talk" to each other over a virtual local area network managed by the docker system. Each container can have a custom name and other containers can use that name to resolve its IP address and easily connect to it.
+Контейнери docker можуть "спілкуватися" між собою через віртуальну локальну мережу під управлінням системи docker. Кожен контейнер може мати власне ім'я, а інші контейнери можуть використовувати це ім'я для визначення його IP-адреси та підключення.
 ====
 
-==== Setting up a docker network
+==== Налаштування мережі docker
 
-Once a docker network is set up, docker will activate the network on our local computer every time docker starts, e.g. after rebooting. So we only need to set up a network once by using the +docker network create+ command. The network name itself is not important, but it has to be unique on our computer. By default, docker has three networks named +host+, +bridge+, and +none+. We will name our new network +lnbook+ and create it like this:
+Як тільки мережа docker налаштована, docker активуватиме мережу на нашому локальному комп’ютері під час кожного запуску, наприклад після перезавантаження комп'ютера. Тому нам потрібно одноразово налаштувати мережу за допомогою команди +docker network create+. Сама назва мережі не має значення, але вона повинна бути унікальною на нашому комп’ютері. За замовчуванням docker має три мережі з іменами +host+, +bridge+ та +none+. Ми назвемо нашу нову мережу +lnbook+ і створимо її наступним чином:
 
 ----
 $ docker network create lnbook
@@ -354,17 +354,17 @@ ad75c0e4f87e        lnbook              bridge              local
 ee8824567c95        none                null                local
 ----
 
-As you can see, running +docker network ls+ gives us a listing of the docker networks. Our +lnbook+ network has been created. We can ignore the network ID, as it is automatically managed.
+Як ви можете бачити, команда +docker network ls+ видає нам перелік мереж docker. Нашу мережу +lnbook+ створено. Ми можемо ігнорувати ідентифікатор мережі, так як він використовується автоматично.
 
-==== Running the bitcoind and c-lightning containers
+==== Запуск контейнерів bitcoind і c-lightning
 
-The next step is to start the bitcoind and c-lightning containers and connect them to the +lnbook+ network. To run a container in a specific network, we must pass the +network+ argument to +docker run+. To make it easy for containers to find each other, we will also give each one a name with the +name+ argument. We start bitcoind like this:
+Наступним кроком є запуск контейнерів bitcoind і c-lightning та підключення їх до мережі +lnbook+. Щоб запустити контейнер у певній мережі, ми повинні додати аргумент +network+ до команди +docker run+. Щоб контейнери могли легко знаходити один одного, ми дамо кожному із них ім'я за допомогою аргументу +name+. Ми запускаємо bitcoind наступним чином:
 
 ----
 $ docker run -it --network lnbook --name bitcoind lnbook/bitcoind
 ----
 
-You should see bitcoind start up and start mining blocks every 10 seconds. Leave it running and open a new terminal window to start c-lightning. We use a similar +docker run+ command with the +network+ and +name+ arguments to start c-lightning as follows:
+Ви маєте побачити, як запускається bitcoind і починається майнинг блоків кожні 10 секунд. Залиште його запущеним і відкрийте нове вікно терміналу для запуску c-lightning. Ми використовуємо подібну команду +docker run+ з аргументами +network+ та +name+ для запуску c-lightning наступним чином:
 
 ----
 $ docker run -it --network lnbook --name c-lightning lnbook/c-lightning
@@ -380,9 +380,9 @@ Funding c-lightning wallet
 
 ----
 
-The c-lightning container starts up and connects to the bitcoind container over the docker network. First, our c-lightning node will wait for bitcoind to start and then it will wait until bitcoind has mined some bitcoin into its wallet. Finally, as part of the container startup, a script will send an RPC command to the bitcoind node which creates a transaction that funds the c-lightning wallet with 10 test BTC. Now our c-lightning node is not only running, but it even has some test bitcoin to play with!
+Контейнер c-lightning запускається і підключається до контейнера bitcoind через мережу docker. Спочатку наша нода c-lightning чекатиме на запуск bitcoind, а потім поки bitcoind змайнить трохи біткоїнів у свій гаманець. Нарешті, в ході запуску контейнера, скрипт надішле bitcoind-ноді RPC-команду створення транзакції, яка переводить на гаманець c-lightning 10 тестових BTC. Наразі наша нода c-lightning не лише працює, але й навіть володіє кількома тестовими біткоїнами, якими можна погратись!
 
-As we demonstrated with the bitcoind container, we can issue commands to our c-lightning container in another terminal in order to extract information, open channels etc. The command that allows us to issue command-line instructions to the c-lightning node is called +lightning-cli+. To get the node info use the following +docker exec+ command in another terminal window:
+Як було показано на контейнері bitcoind, ми можемо давати команди нашому контейнеру c-lightning в іншому терміналі для отримання інформації, отримання переліку відкритих каналів тощо. Команда, що дозволяє нам давати інструкції ноді c-lightning, називається +lightning-cli+. Щоб отримати інформацію про ноду, використовуйте наступну команду +docker exec+ в іншому вікні терміналу:
 
 ----
 $ docker exec c-lightning lightning-cli getinfo
@@ -417,19 +417,19 @@ $ docker exec c-lightning lightning-cli getinfo
 
 ----
 
-We now have our first Lightning node running on a virtual network and communicating with a test bitcoin blockchain. Later in this chapter we will start more nodes and connect them to each other to make some Lightning payments.
+Тепер у нас є перша Lightning-нода, який працює у віртуальній мережі та спілкується з тестовим Біткоїн-блокчейном. Далі в цьому розділі ми запустимо більше нод, з'єднаємо їх між собою і проведемо кілька Lightning-платежів.
 
-In the next section we will also look at how to download, configure and compile c-lightning directly from the source code. This is an optional and advanced step that will teach you how to use the build tools and allow you to make modifications to c-lighting source code. With this knowledge you can write some code, fix some bugs, or create a plugin for c-lightning. If you are not planning on diving into the source code or programming of a Lightning node, you can skip the next section entirely. The docker container we just built is sufficient for most of the examples in the book.
+У наступній секції ми також розглянемо, як завантажити, налаштувати та скомпілювати c-lightning безпосередньо з вихідного коду. Це необов’язковий та просунутий крок, який навчить вас користуватися інструментами збірки та дозволить вам модифікувати вихідний код c-lighting. Завдяки цим знанням ви можете написати якийсь свій код, виправити деякі помилки або створити плагін для c-lightning. Якщо ви не плануєте занурюватися у вихідний код або програмувати ноду Lightning, ви можете повністю пропустити наступну секцію. Щойно створений docker-контейнер буде достатнім для більшості прикладів у книзі.
 
-==== Installing c-lightning from source code
+==== Інсталяція c-lightning з вихідного коду
 
-The c-lightning developers have provided detailed instructions for building c-lightning from source code. We will be following the instructions here:
+Розробники c-lightning надали детальні інструкції щодо збірки c-lightning із вихідного коду. Ми будемо слідувати інструкціям звідси:
 
 https://github.com/ElementsProject/lightning/blob/master/doc/INSTALL.md
 
-==== Installing prerequisite libraries and packages
+====  Інсталяція необхідних бібліотек та пакунків
 
-The common first step is the installation of prerequisite libraries. We use the +apt+ package manager to install these:
+Першим кроком є встановлення необхідних бібліотек. Використаємо менеджер пакунків +apt+ для цього:
 
 ----
 $ sudo apt-get update
@@ -465,11 +465,11 @@ Setting up libsodium-dev:amd64 (1.0.18-1) ...
 $
 ----
 
-After a few minutes and a lot of on-screen activity, you will have installed all the necessary packages and libraries. Many of these libraries are also used by other Lightning packages and needed for software development in general.
+Через кілька хвилин і багато тексту на екрані всі необхідні пакети та бібліотеки буде встановлено. Багато з цих бібліотек також використовуються іншими пакетами Lightning та потрібні для розробки програмного забезпечення загалом.
 
-==== Copying the c-lightning source code
+==== Копіювання вихідного коду c-lightning
 
-Next, we will copy the latest version of c-lightning from the source code repository. To do this, we will use the +git clone+ command which clones a version-controlled copy onto your local machine thereby allowing you to keep it synchronized with subsequent changes without having to download the whole repository again:
+Далі ми скопіюємо останню версію c-lightning із репозиторію. Для цього ми використаємо команду +git clone+, яка клонує копію вихідного коду на вашу локальну машину, що дозволить синхронізувати майбутні зміни без необхідності повторного завантаження цілого репозиторію:
 
 ----
 $ git clone https://github.com/ElementsProject/lightning.git
@@ -485,16 +485,16 @@ $ cd lightning
 
 ----
 
-We now have a copy of c-lightning cloned into the +lightning+ subfolder, and we have used the +cd+ (change directory) command to enter that subfolder.
+Тепер в нас є копія c-lightning у каталозі +lightning+, і ми виконали команду +cd+ (змінити каталог) для переходу в нього.
 
-==== Compiling the c-lightning source code
+==== Компіляція вихідного коду c-lightning
 
-Next, we use a set of _build scripts_ that are commonly available in many open source projects. These _build scripts_ use the +configure+ and +make+ commandos which allow us to:
+Далі ми використовуємо набір _скриптів для збірки_, які зазвичай доступні у багатьох проектах з відкритим кодом. Ці _скрипти для збірки_ використовують команди +configure+ і +make+, які дозволяють нам:
 
-* Select the build options and check necessary dependencies (+configure+).
-* Build and install the executables and libraries (+make+).
+* Вказати параметри збірки та перевірити необхідні залежності (+configure+).
+* Зібрати та інсталювати програми та бібліотеки (+make+).
 
-Running the +configure+ with the +help+ option will show us all the available options:
+Запуск +configure+ з опцією +help+ виведе на екран список доступних опцій:
 
 ----
 $ ./configure --help
@@ -517,7 +517,7 @@ Options include:
     Compile with address-sanitizer
 ----
 
-We don't need to change any of the defaults for this example. Hence we run +configure+ again without any options to use the defaults:
+Для цього прикладу нам не потрібно змінювати жодні опції, встановлені за замовчуванням. Отже, ми знову запускаємо +configure+ без жодних опцій:
 
 ----
 $ ./configure
@@ -538,7 +538,7 @@ Setting TEST_NETWORK... regtest
 $
 ----
 
-Next, we use the +make+ command to build the libraries, components, and executables of the c-lightning project. This part will take several minutes to complete and will use your computer's CPU and disk heavily. Expect some noise from the fans! Run +make+:
+Далі запустимо збірку бібліотек, компонентів та виконуваних файлів проекту c-lightning за допомогою команди +make+. Ця процедура займе кілька хвилин і сильно навантажить центральний процесор та диск вашого комп’ютера. Чекайте шуму від кулерів! Запустіть +make+:
 
 ----
 $ make
@@ -551,7 +551,7 @@ cc   -Og  ccan-asort.o ccan-autodata.o ccan-bitmap.o ccan-bitops.o ccan-...
 
 ----
 
-If all goes well, you will not see any +ERROR+ message stopping the execution of the above command. The c-lightning software package has been compiled from source and we are now ready to install the executable components we created in the previous step:
+Якщо все буде добре, то ви не побачите жодного повідомлення +ERROR+, яке б зупинило виконання вищевказаної команди. Програмний пакет c-lightning скомпільовано із вихідного коду, і тепер ми можемо інсталювати створені на попередньому кроці програми:
 
 ----
 $ sudo make install
@@ -568,7 +568,7 @@ install cli/lightning-cli lightningd/lightningd /usr/local/bin
 [...]
 ----
 
-In order to verify that the +lightningd+ and +lightning-cli+ commands have been installed correctly we will ask each executable for its version information:
+Щоб перевірити, що програми +lightningd+ та +lightning-cli+ було встановлено правильно, ми запитаємо їх версії:
 
 ----
 $ lightningd --version
@@ -577,7 +577,7 @@ $ lightning-cli --version
 v0.8.1rc2
 ----
 
-You may see a different version from that shown above as the software continues to evolve long after this book is published. However, no matter what version you see, the fact that the commands execute and respond with version information means that you have succeeded in building the c-lightning software.
+Можливо, ви побачите відмінну версію від наведеної вище, оскільки програмне забезпечення продовжуватиме розвиватися після публікації цієї книги. Однак незалежно від того, яку версію ви бачите, той факт, що команди виконуються та видають інформацією про версію, означає, що вам вдалося зібрати програмне забезпечення c-lightning.
 
 === The Lightning Network Daemon (LND) node project
 
