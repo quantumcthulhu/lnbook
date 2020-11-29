@@ -380,9 +380,9 @@ Funding c-lightning wallet
 
 ----
 
-Контейнер c-lightning запускається і підключається до контейнера bitcoind через мережу docker. Спочатку наша нода c-lightning чекатиме на запуск bitcoind, а потім поки bitcoind змайнить трохи біткоїнів у свій гаманець. Нарешті, в ході запуску контейнера, скрипт надішле bitcoind-ноді RPC-команду створення транзакції, яка переводить на гаманець c-lightning 10 тестових BTC. Наразі наша нода c-lightning не лише працює, але й навіть володіє кількома тестовими біткоїнами, якими можна погратись!
+Контейнер c-lightning запускається і підключається до контейнера bitcoind через мережу docker. Спочатку наша нода c-lightning чекатиме на запуск bitcoind, а потім чекатиме поки bitcoind змайнить трохи біткоїнів у свій гаманець. Нарешті, в ході запуску контейнера, скрипт надішле bitcoind-ноді RPC-команду створення транзакції, яка переводить на гаманець c-lightning 10 тестових BTC. Наразі наша нода c-lightning не лише працює, але й навіть володіє кількома тестовими біткоїнами, якими можна погратись!
 
-Як було показано на контейнері bitcoind, ми можемо давати команди нашому контейнеру c-lightning в іншому терміналі для отримання інформації, отримання переліку відкритих каналів тощо. Команда, що дозволяє нам давати інструкції ноді c-lightning, називається +lightning-cli+. Щоб отримати інформацію про ноду, використовуйте наступну команду +docker exec+ в іншому вікні терміналу:
+Як було показано на контейнері bitcoind, ми можемо давати команди нашому контейнеру c-lightning в іншому терміналі для отримання інформації, отримання переліку відкритих каналів тощо. Команда, що дозволяє нам давати інструкції ноді c-lightning, називається +lightning-cli+. Щоб отримати інформацію про ноду, виконайте наступну команду +docker exec+ в іншому вікні терміналу:
 
 ----
 $ docker exec c-lightning lightning-cli getinfo
@@ -419,7 +419,7 @@ $ docker exec c-lightning lightning-cli getinfo
 
 Тепер у нас є перша Lightning-нода, який працює у віртуальній мережі та спілкується з тестовим Біткоїн-блокчейном. Далі в цьому розділі ми запустимо більше нод, з'єднаємо їх між собою і проведемо кілька Lightning-платежів.
 
-У наступній секції ми також розглянемо, як завантажити, налаштувати та скомпілювати c-lightning безпосередньо з вихідного коду. Це необов’язковий та просунутий крок, який навчить вас користуватися інструментами збірки та дозволить вам модифікувати вихідний код c-lighting. Завдяки цим знанням ви можете написати якийсь свій код, виправити деякі помилки або створити плагін для c-lightning. Якщо ви не плануєте занурюватися у вихідний код або програмувати ноду Lightning, ви можете повністю пропустити наступну секцію. Щойно створений docker-контейнер буде достатнім для більшості прикладів у книзі.
+У наступній секції ми також розглянемо, як завантажити, налаштувати та скомпілювати c-lightning безпосередньо з вихідного коду. Це необов’язковий та просунутий крок, який навчить вас користуватися інструментами збірки та дозволить вам модифікувати вихідний код c-lighting. Завдяки цим знанням ви зможете написати якийсь свій код, виправити деякі помилки або створити плагін для c-lightning. Якщо ви не плануєте занурюватися у вихідний код або програмувати ноду Lightning, ви можете повністю пропустити наступну секцію. Щойно створений docker-контейнер буде цілком достатнім для більшості прикладів у книзі.
 
 ==== Інсталяція c-lightning з вихідного коду
 
@@ -577,19 +577,19 @@ $ lightning-cli --version
 v0.8.1rc2
 ----
 
-Можливо, ви побачите відмінну версію від наведеної вище, оскільки програмне забезпечення продовжуватиме розвиватися після публікації цієї книги. Однак незалежно від того, яку версію ви бачите, той факт, що команди виконуються та видають інформацією про версію, означає, що вам вдалося зібрати програмне забезпечення c-lightning.
+Можливо, ви побачите відмінну версію від наведеної вище, оскільки програмне забезпечення продовжуватиме розвиватися після публікації цієї книги. Однак незалежно від того, яку версію ви бачите, той факт, що команди виконуються та видають інформацію про версію, означає, що вам вдалося зібрати програмне забезпечення c-lightning.
 
-=== The Lightning Network Daemon (LND) node project
+=== Нода Lightning Network Daemon (LND)
 
-The Lightning Network Daemon (LND) is a complete implementation of a Lightning Network node by Lightning Labs. The LND project provides a number of executable applications, including +lnd+ (the daemon itself) and +lncli+ (the command-line utility). LND has several pluggable back-end chain services including btcd (a full-node), bitcoind (Bitcoin Core), and neutrino (a new experimental light client). LND is written in the Go programming language. The project is open source and developed collaboratively on Github:
+Lightning Network Daemon (LND) є повною реалізацією ноди Lightning Network від компанії Lightning Labs. Проект LND пропонує ряд програм, включаючи +lnd+ (сам демон) та +lncli+ (утиліта командного рядка). LND може підключатись до кількох сервісів включно з btcd (повна нода), bitcoind (Bitcoin Core) та neutrino (новий експериментальний легкий клієнт). LND написаний мовою програмування Go. Проект відкритий і спільно розробляється на Github:
 
 https://github.com/LightningNetwork/lnd
 
-In the next few sections we will build a docker container to run LND, build LND from source code, and learn how to configure and run LND.
+У наступних секціях ми створимо docker-контейнер для запуску LND, зберемо LND з вихідного коду та дізнаємося, як налаштувати та запустити LND.
 
-==== Building LND as a docker container
+==== LND у вигляді docker-контейнера
 
-If you have followed the previous examples in this chapter, you should be quite familiar with the basic docker commands by now. In this section we will repeat them to build the LND container. The container is located in +code/docker/lnd+. We issue commands in a terminal to change the working directory to +code/docker+ and perform the +docker build+ command:
+Якщо ви слідкувати за попередніми прикладами з цього розділу, то вже добре знайомі з основними командами docker. У цій секції ми повторимо їх для створення контейнера LND. Контейнер знаходиться в +code/docker/lnd+. В терміналі перейдемо в робочий каталог +code/docker+ і запустимо команду +docker build+:
 
 ----
 $ cd code/docker
@@ -609,22 +609,22 @@ Successfully tagged lnbook/lnd:latest
 
 ----
 
-Our container is now built and ready to run. As with the c-lightning container we built previously, the LND container also depends on a running instance of Bitcoin Core. As before, we need to start the bitcoind container in another terminal and connect LND to it via a docker network. We have already set up a docker network called +lnbook+ previously and will be using that again here.
+Тепер наш контейнер створено і він готовий до роботи. Як і у випадку з контейнером c-lightning, який ми створили раніше, контейнер LND також залежить від запущеного екземпляра Bitcoin Core. Як і раніше, нам потрібно запустити контейнер bitcoind в іншому терміналі і підключити до нього LND через мережу docker. Ми вже створили docker мережу під назвою +lnbook+ і використаємо її знову.
 
 [TIP]
 ====
-Normally, each node operator runs its own Lightning node and its own Bitcoin node on their own server. For us a single bitcoind container can serve many Lightning nodes. On our simulated network we can run several Lightning nodes, all connecting to a single Bitcoin node in regtest mode.
+Зазвичай кожен оператор ноди запускає свою власну ноду Lightning та власну ноду Bitcoin на своєму сервері. В нашому випадку один контейнер bitcoind може обслуговувати багато нод Lightning. В нашій симульованій мережі ми можемо запустити кілька нод Lightning, всі вони підключаються до однієї ноди Bitcoin в режимі regtest.
 ====
 
-==== Running the bitcoind and LND containers
+==== Запуск контейнерів bitcoind та LND
 
-As before, we start the bitcoind container in one terminal and LND in another. If you already have the bitcoind container running, you do not need to restart it. Just leave it running and skip the next step. To start bitcoind in the +lnbook+ network we use +docker run+ like this:
+Як і раніше, ми запускаємо контейнер bitcoind в одному терміналі, а LND в іншому. Якщо у вас вже запущений контейнер bitcoind, вам не потрібно його перезапускати. Просто залиште його запущеним і пропустіть наступний крок. Для запуску bitcoind в мережі +lnbook+ ми використовуємо +docker run+ наступним чином:
 
 ----
 $ docker run -it --network lnbook --name bitcoind lnbook/bitcoind
 ----
 
-Next, we start the LND container we just built. As done before we need to attach it to the +lnbook+ network and give it a name:
+Наступним кроком запустимо щойно створений контейнер LND. Як і раніше, нам потрібно під'єднати його до мережі +lnbook+ і дати йому ім'я:
 
 ----
 $ docker run -it --network lnbook --name lnd lnbook/lnd
@@ -641,9 +641,9 @@ Funding lnd wallet
 
 ----
 
-The LND container starts up and connects to the bitcoind container over the docker network. First, our LND node will wait for bitcoind to start and then it will wait until bitcoind has mined some bitcoin into its wallet. Finally, as part of the container startup, a script will send an RPC command to the bitcoind node thereby creating a transaction that funds the LND wallet with 10 test BTC.
+Контейнер LND запускається і підключається до контейнера bitcoind через docker-мережу. Спочатку наша нода LND чекатиме на запуск bitcoind, а потім чекатиме поки bitcoind змайнить трохи біткоїнів у свій гаманець. Нарешті, в ході запуску контейнера, скрипт надішле bitcoind-ноді RPC-команду створення транзакції, яка переводить на гаманець LND 10 тестових BTC.
 
-As we demonstrated previously, we can issue commands to our container in another terminal in order to extract information, open channels etc. The command that allows us to issue command-line instructions to the +lnd+ daemon is called +lncli+. Let's get the node info using the +docker exec+ command in another terminal window:
+Як було показано раніше, ми можемо давати команди нашому контейнеру в іншому терміналі для отримання інформації, отримання переліку відкритих каналів тощо. Команда, що дозволяє нам давати інструкції демону +lnd+, називається +lncli+. Щоб отримати інформацію про ноду, виконайте наступну команду +docker exec+ в іншому вікні терміналу:
 
 ----
 $ docker exec lnd lncli -n regtest getinfo
@@ -660,68 +660,68 @@ $ docker exec lnd lncli -n regtest getinfo
 }
 ----
 
-We now have another Lightning node running on the +lnbook+ network and communicating with bitcoind. If you are still running the c-lightning container, then there are now two nodes running. They're not yet connected to each other, but we will be connecting them to each other soon.
+Тепер у нас є ще одна нода Lightning, яка працює в мережі +lnbook+ і спілкується з bitcoind. Якщо у вас запущений контейнер c-lightning, то зараз працює дві ноди. Вони ще не з'єднані між собою, але невдовзі ми їх з'єднаємо.
 
-If desired, you can run any combination of LND and c-lightning nodes on the same Lightning network. For example, to run a second LND node you would issue the +docker run+ command with a different container name like so:
+За бажанням ви можете запустити будь-яку комбінацію нод LND та c-lightning в тій самій мережі Lightning. Наприклад, щоб запустити другий вузол LND, виконайте команду +docker run+ з іншим ім'ям контейнера, наприклад так:
 
 ----
 $ docker run -it --network lnbook --name lnd2 lnbook/lnd
 ----
 
-In the command above, we start another LND container, naming it +lnd2+. The names are entirely up to you, as long as they are unique. If you don't provide a name, docker will construct a unique name by randomly combining two English words such as "naughty_einstein". This was the actual name docker chose for us when we wrote this paragraph. How funny!
+У наведеній вище команді ми запускаємо інший контейнер LND під назвою +lnd2+. Ви можете вказати будь-яке унікальне ім'я. Якщо ви не вкажете ім'я, docker самостійно створить унікальне ім'я із двох випадкових англійських слів, наприклад "naughty_einstein" ("Вередливий Айнштайн"). Це була справжня назва, яку обрав нам docker, коли ми писали цей параграф. Як смішно!
 
-In the next section we will look at how to download and compile LND directly from the source code. This is an optional and advanced step that will teach you how to use the Go language build tools and allow you to make modifications to LND source code. With this knowledge you can write some code or fix some bugs. If you are not planning on diving into the source code or programming of a Lightning node, you can skip the next section entirely. The docker container we just built is sufficient for most of the examples in the book.
+У наступній секції ми розглянемо, як завантажити та скомпілювати LND безпосередньо з вихідного коду. Це необов’язковий та просунутий крок, який навчить вас користуватися інструментами збірки мови Go та дозволить вам модифікувати вихідний код LND. Завдяки цим знанням ви зможете написати якийсь свій код або виправити деякі помилки. Якщо ви не плануєте занурюватися у вихідний код або програмувати ноду Lightning, ви можете повністю пропустити наступну секцію. Щойно створений docker-контейнер буде цілком достатнім для більшості прикладів у книзі.
 
-==== Installing LND from source code
+==== Інсталяція LND з вихідного коду
 
-In this section we will build LND from scratch. LND is written in the Go programming language. IF you want to find out more about Go, search for +golang+ instead of +go+ to avoid irrelevant results. Because it is written in Go and not C or C++, it uses a different "build" framework than the GNU autotools/make framework we saw used in c-lightning previously. Don't fret though, it is quite easy to install and use the golang tools and we will show each step here. Go is a fantastic language for collaborative software development as it produces very consistent, precise, and easy to read code regardless of the number of authors. Go is focused and "minimalist" in a way that encourages consistency across versions of the language. As a compiled language, it is also quite efficient. Let's dive in.
+У цій секції ми зберемо LND з нуля. LND написаний мовою програмування Go. ЯКЩО ви хочете дізнатись більше про Go, шукайте за запитом +golang+ замість +go+, щоб уникнути нерелевантних результатів. Оскільки LND написаний на Go, а не на C чи C++, він використовує інший спосіб збірки, ніж GNU autotools/make, який ми бачили раніше у c-lightning. Але не засмучуйтесь, це досить легко, ми крок за кроком покажемо як встановити та використовувати інструменти golang. Go - це фантастична мова для спільної розробки програмного забезпечення, оскільки вона дозволяє робити дуже сумісний, чіткий і легкий для читання код незалежно від кількості авторів. Go сфокусований і "мінімалістичний" в плані узгодження різних версій мови. Go - компільована мова, тому вона також є досить ефективною. Давайте зануримось глибше.
 
-We will follow the installation instructions found in the LND project documentation:
+Прослідуємо по інструкції з інсталяції, наведеній у проектній документації LND:
 
 https://github.com/lightningnetwork/lnd/blob/master/docs/INSTALL.md
 
-First, we will install the +golang+ package and associated libraries. We strictly require Go version 1.13 or later. The official Go language packages are distributed as binaries from https://golang.org/dl. For convenience they are also packaged as Debian packages available through the +apt+ command. You can follow the instructions on https://golang.org/dl or use the +apt+ commands below on a Debian/Ubuntu Linux system as described on https://github.com/golang/go/wiki/Ubuntu:
+Спочатку встановимо пакет +golang+ та пов'язані з ним бібліотеки. Нам потрібна версія Go 1.13 або пізніша. Офіційні пакети мови Go розповсюджуються у вигляді двійкових файлів з https://golang.org/dl. Для зручності вони також розповсюджуються у вигляді пакетів Debian і доступні за допомогою команди +apt+. Ви можете слідувати інструкціям на https://golang.org/dl або використовувати команди +apt+ для системи Debian/Ubuntu Linux, як описано на https://github.com/golang/go/wiki/Ubuntu:
 
 ----
 $ sudo apt install golang-go
 ----
 
-Check that you have the correct version installed and ready to use by running:
+Переконайтесь, що правильна версія встановлена та готова до використання:
 
 ----
 $ go version
 go version go1.13.4 linux/amd64
 ----
 
-We have 1.13.4, so we're ready to... Go! Next we need to tell any programs where to find the Go code. This is accomplished by setting the environment variable +GOPATH+. Usually the Go code is located in a directory named +gocode+ directly in the user's home directory. With the following two commands we consistently set the +GOPATH+ and make sure your shell adds it to your executable +PATH+. Note that the user's home directory is referred to as +~+ in the shell. 
+Наша версія 1.13.4, тож ми готові... Далі нам потрібно вказати іншим програмам, де їм шукати код Go. Для цього потрібно встановити змінну середовища +GOPATH+. Зазвичай код Go знаходиться в каталозі з іменем +gocode+ безпосередньо в домашньому каталозі користувача. За допомогою наступних двох команд ми встановлюємо значення змінних середовища +GOPATH+ і +PATH+. Зверніть увагу на те, що домашній каталог користувача називається +~+.
 
 ----
-export GOPATH=~/gocode
-export PATH=$PATH:$GOPATH/bin
+$ export GOPATH=~/gocode
+$ export PATH=$PATH:$GOPATH/bin
 ----
 
-To avoid having to set these environment variables every time you open a shell, you can add those two lines to the end of your bash shell configuration file +.bashrc+ in your home directory, using the editor of your choice.
+Щоб не встановлювати ці змінні середовища кожного разу при відкритті шеллу, ви можете додати ці два рядки до кінця вашого конфігураційного файлу +.bashrc+ у домашньому каталозі за допомогою вибраного вами текстового редактора.
 
-==== Copying the LND source code
+==== Копіювання вихідного коду LND
 
-As with many open source projects nowadays, the source code for LND is on Github (www.github.com). The +go get+ command can fetch it directly using the git protocol:
+Як і у випадку з багатьма проектами з відкритим кодом, вихідний код LND знаходиться на Github (www.github.com). Команда +go get+ може отримати її безпосередньо за протоколом git:
 
 ----
 $ go get -d github.com/lightningnetwork/lnd
 ----
 
-Once +go get+ finishes, you will have a sub-directory under +GOPATH+ that contains the LND source code.
+Як тільки +go get+ закінчить свою роботу, у вас з’явиться підкаталог у +GOPATH+, що містить вихідний код LND.
 
-==== Compiling the LND source code
+==== Компіляція вихідного коду LND
 
-LND uses the +make+ build system. To build the project, we change directory to LND's source code and then use +make+ like this:
+Для збірки LND використовується команда +make+. Щоб зібрати проект, ми переходимо в каталог з вихідним кодом LND, а потім запускаємо +make+:
 
 ----
-cd $GOPATH/src/github.com/lightningnetwork/lnd
-make && make install
+$ cd $GOPATH/src/github.com/lightningnetwork/lnd
+$ make && make install
 ----
 
-After several minutes you will have two new commands +lnd+ and +lncli+ installed. Try them out and check their version to ensure they are installed:
+Після кількох хвилин у вас буде встановлено дві нові команди +lnd+ та +lncli+. Спробуйте їх і перевірте їх версію, щоб переконатися, що вони встановлені:
 
 ----
 $ lnd --version
@@ -730,20 +730,20 @@ $ lncli --version
 lncli version 0.10.99-beta commit=clock/v1.0.0-106-gc1ef5bb908606343d2636c8cd345169e064bdc91
 ----
 
-You will likely see a different version from that shown above, as the software continues to evolve long after this book is published. However, no matter what version you see, the fact that the commands execute and show you version information means that you have succeeded in building the LND software.
+Можливо, ви побачите відмінну версію від наведеної вище, оскільки програмне забезпечення продовжуватиме розвиватися після публікації цієї книги. Однак незалежно від того, яку версію ви бачите, той факт, що команди виконуються та видають інформацію про версію, означає, що вам вдалося зібрати програмне забезпечення LND.
 
-=== The Eclair Lightning node project
+=== Lightning нода Eclair
 
-Eclair (French for Lightning) is a Scala implementation of the Lightning Network made by ACINQ. Eclair is also one of the most popular and pioneering mobile Lightning wallets which we used to demonstrate a Lightning payment in the second chapter. In this section we examine the Eclair server project which runs a Lightning node. Eclair is an open source project and can be found on GitHub:
+Eclair ("блискавка" французькою мовою) - це реалізація Lightning Network мовою Scala, зроблена компанією ACINQ. Eclair також є одним з найпопулярніших та новаторських мобільних Lightning-гаманців, який ми використовували для демонстрації Lightning-платежу в другому розділі. У цьому розділі ми розглядаємо серверну ноду Eclair. Eclair - це проект з відкритим кодом, і його можна знайти на GitHub:
 
 https://github.com/ACINQ/eclair
 
 
-In the next few sections we will build a docker container to run Eclair, as we did previously with c-lightning and LND. We will also build Eclair directly from the source code.
+В наступних секціях ми створимо docker-контейнер для запуску Eclair, як ми робили раніше з c-lightning та LND. Ми також зберемо Eclair безпосередньо з вихідного коду.
 
-==== Building Eclair as a Docker container
+==== Eclair у вигляді docker-конейтера
 
-By now, you are almost an expert in the basic operations of docker! In this section we will repeat many of the previously seen commands to build the Eclair container. The container is located in +code/docker/eclair+. We start in a terminal, by switching the working directory to +code/docker+ and issuing the +docker build+ command:
+Ви вже майже експерт в основних операціях docker! У цій секції ми повторимо багато раніше використаних команд для створення контейнера Eclair. Контейнер знаходиться в +code/docker/eclair+. Ми починаємо з терміналу, переходимо в робочий каталог +code/docker+ і виконуємо команду +docker build+:
 
 ----
 $ cd code/docker
@@ -768,19 +768,19 @@ Successfully tagged lnbook/eclair:latest
 
 ----
 
-Our container is now built and ready to run. The Eclair container also depends on a running instance of Bitcoin Core. As before, we need to start the bitcoind container in another terminal and connect Eclair to it via a docker network. We have already set up a docker network called +lnbook+ and will be reusing it here.
+Тепер наш контейнер створено і він готовий до роботи. Перед запуском контейнера Eclair, нам треба запустити контейнер bitcoind в іншому терміналі, оскільки Eclair залежить від bitcoind. Ми вже створили мережу docker під назвою +lnbook+ і будемо використовувати її знову.
 
-One notable difference between Eclair and LND or c-lightning is that Eclair doesn't contain a separate bitcoin wallet but instead relies directly on the bitcoin wallet in Bitcoin Core. Recall that using LND we "funded" its bitcoin wallet by executing a transaction to transfer bitcoin from Bitcoin Core's wallet to LND's bitcoin wallet. This step is not necessary using Eclair. When running Eclair, the Bitcoin Core wallet is used directly as the source of funds to open channels. As a result, unlike the LND or c-lightning containers, the Eclair container does not contain a script to transfer bitcoin into its wallet on startup.
+Одна важлива відмінність між Eclair та LND або c-lightning полягає в тому, що нода Eclair не містить в собі біткоїн-гаманця, натомість Eclair покладається на біткоїн-гаманець у Bitcoin Core. Нагадаємо, що використовуючи LND ми "профінансували" його біткоїн-гаманець, перевівши біткоїни з гаманця Bitcoin Core на гаманець LND. Цей крок зайвий у випадку Eclair. При запуску Eclair гаманець Bitcoin Core використовується безпосередньо як джерело коштів для відкриття каналів. В результаті, на відміну від контейнерів LND або c-lightning, контейнер Eclair не містить скрипта для переводу біткоїнів у свій гаманець при запуску.
 
-==== Running the bitcoind and Eclair containers
+==== Запуск контейнерів bitcoind і Eclair
 
-As before, we start the bitcoind container in one terminal and the Eclair container in another. If you already have the bitcoind container running, you do not need to restart it. Just leave it running and skip the next step. To start +bitcoind+ in the +lnbook+ network, we use +docker run+ like this:
+Як і раніше, ми запускаємо контейнер bitcoind в одному терміналі і контейнер Eclair - в іншому. Якщо контейнер bitcoind вже запущено, то перезапускати його не потрібно. Просто залиште його запущеним і переходьте до наступного кроку. Щоб запустити +bitcoind+ в мережі +lnbook+, використаємо команду +docker run+ наступним чином:
 
 ----
 $ docker run -it --network lnbook --name bitcoind lnbook/bitcoind
 ----
 
-Next, we start the Eclair container we just built. We will need to attach it to the +lnbook+ network and give it a name, just as we did with the other containers:
+Далі запустимо щойно створений контейнер Eclair. Нам потрібно під'єднати його до мережі +lnbook+ і дати йому ім'я, як ми це робили з іншими контейнерами:
 
 ----
 $ docker run -it --network lnbook --name eclair lnbook/eclair
@@ -797,9 +797,9 @@ INFO  fr.acinq.eclair.Setup - version=0.4 commit=69c538e
 
 ----
 
-The Eclair container starts up and connects to the bitcoind container over the docker network. First, our Eclair node will wait for bitcoind to start and then it will wait until bitcoind has mined some bitcoin into its wallet.
+Контейнер Eclair запускається і підключається до контейнера bitcoind через docker-мережу. Спочатку наша нода Eclair чекатиме на запуск bitcoind, а потім чекатиме поки bitcoind змайнить трохи біткоїнів у свій гаманець.
 
-As we demonstrated previously, we can issue commands to our container in another terminal in order to extract information, open channels etc. The command that allows us to issue command-line instructions to the +eclair+ daemon is called +eclair-cli+. The +eclair-cli+ command expects a password which we have set to "eclair" in this container. We pass the password +eclair+ to the +eclair-cli+ command via the +p+ flag. Using the +docker exec+ command in another terminal window we get the node info from Eclair:
+Як було показано раніше, ми можемо давати команди нашому контейнеру в іншому терміналі для отримання інформації, відкриття каналів тощо. Команда, що дозволяє нам давати інструкції демону +eclair+, називається +eclair-cli+. Команда +eclair-cli+ потребує пароль, який ми попередньо встановили на цьому контейнері у значення "eclair". Ми передаємо пароль +eclair+ в команду +eclair-cli+ через флаг +p+. За допомогою команди +docker exec+ в іншому терміналі ми отримуємо інформацію про ноду Eclair:
 
 ----
 $ docker exec eclair eclair-cli -p eclair getinfo
@@ -816,31 +816,31 @@ $ docker exec eclair eclair-cli -p eclair getinfo
 
 ----
 
-We now have another Lightning node running on the +lnbook+ network and communicating with bitcoind. You can run any number and any combination of Lightning nodes on the same Lightning network. Any number of Eclair, LND, and c-lightning nodes can coexist. For example, to run a second Eclair node you would issue the +docker run+ command with a different container name as follows:
+Тепер у нас є ще одна Lightning-нода, яка працює в мережі +lnbook+ і спілкується з bitcoind. Ви можете запускати будь-яку кількість та будь-яку комбінацію нод Lightning в одній мережі Lightning. Будь-яка кількість нод Eclair, LND та c-lightning може співіснувати. Наприклад, щоб запустити другу ноду Eclair, виконайте команду +docker run+ з іншим ім'ям контейнера:
 
 ----
 $ docker run -it --network lnbook --name eclair2 lnbook/eclair
 ----
 
-In the above command we start another Eclair container named +eclair2+.
+Вищенаведеною командою ми запускаємо ще один контейнер Eclair під назвою +eclair2+.
 
-In the next section we will also look at how to download and compile Eclair directly from the source code. This is an optional and advanced step that will teach you how to use the Scala and Java language build tools and allow you to make modifications to Eclair's source code. With this knowledge, you can write some code or fix some bugs. If you are not planning on diving into the source code or programming of a Lightning node, you can skip the next section entirely. The docker container we just built is sufficient for most of the examples in the book.
+У наступній секції ми також розглянемо, як завантажити, налаштувати та скомпілювати Eclair безпосередньо з вихідного коду. Це необов’язковий та просунутий крок, який навчить вас користуватися інструментами збірки мов Scala та Java та дозволить вам модифікувати вихідний код Eclair. Завдяки цим знанням ви зможете написати якийсь свій код чи виправити деякі помилки. Якщо ви не плануєте занурюватися у вихідний код або програмувати ноду Lightning, ви можете повністю пропустити наступну секцію. Щойно створений docker-контейнер буде цілком достатнім для більшості прикладів у книзі.
 
-==== Installing Eclair from source code
+==== Інсталяція Eclair з вихідного коду
 
-In this section we will build Eclair from scratch. Eclair is written in the Scala programming language which is compiled using the Java compiler. To run Eclair, we first need to install Java and its build tools. We will be following the instructions found in the BUILD.md document of the Eclair project:
+У цьому розділі ми зберемо Eclair з нуля. Eclair написаний мовою програмування Scala, яка компілюється за допомогою компілятора Java. Для запуску Eclair нам спочатку потрібно встановити Java та її інструменти збірки. Ми будемо слідувати інструкціям, наведеним у документі BUILD.md проекту Eclair:
 
 https://github.com/ACINQ/eclair/blob/master/BUILD.md
 
-The required Java compiler is part of OpenJDK 11. We will also need a buid framework called Maven, version 3.6.0 or above.
+Потрібний нам компілятор Java є частиною OpenJDK 11. Нам також знадобиться фреймворк для збірки під назвою Maven версії 3.6.0 або новішої.
 
-On a Debian/Ubuntu Linux system we can use the +apt+ command to install both OpenJDK11 and Maven as shown below:
+У Debian/Ubuntu Linux ми можемо використати команду +apt+ для встановлення OpenJDK11 і Maven, як показано нижче:
 
 ----
 $ sudo apt install -y openjdk-11-jdk maven
 ----
 
-Verify that you have the correct version installed by running:
+Переконайтесь, що правильна версія встановлена, запустивши:
 
 ----
 $ javac -version
@@ -852,23 +852,23 @@ Java version: 11.0.7, vendor: Ubuntu, runtime: /usr/lib/jvm/java-11-openjdk-amd6
 
 ----
 
-We have OpenJDK 11.0.7 and Maven 3.6.1, so we're ready.
+Ми маємо OpenJDK 11.0.7 та Maven 3.6.1, отже ми готові.
 
-==== Copying the Eclair source code
+==== Копіювання вихідного коду Eclair
 
-The source code for Eclair is on Github. The +git clone+ command can create a local copy for us. Let's change to our home directory and run it there:
+Вихідний код Eclair лежить на Github. Командою +git clone+ створимо його локальну копію. Перейдемо до нашого домашнього каталогу та запустимо її звідти:
 
 ----
-$ cd
+$ cd ~
 $ git clone https://github.com/ACINQ/eclair.git
 
 ----
 
-Once +git clone+ finishes you will have a sub-directory +eclair+ containing the source code for the Eclair server.
+Як тільки +git clone+ завершить свою роботу, у вас буде підкаталог +eclair+ з вихідним кодом серверу Eclair.
 
-==== Compiling the Eclair source code
+==== Компіляція вихідного коду Eclair
 
-Eclair uses the +Maven+ build system. To build the project we change the working directory to Eclair's source code and then use +mvn package+ like this:
+Eclair використовує систему збірки +Maven+. Для збірки проекту ми переходимо в каталог з вихідним кодом Eclair, а потім виконуємо команду +mvn package+:
 
 ----
 $ cd eclair
@@ -901,11 +901,11 @@ $ mvn package
 
 ----
 
-After several minutes the build of the Eclair package will complete. You will find the Eclair server node under +eclair-node/target+, packaged as a zip file. Unzip and run it, by following the instructions found here:
+Через кілька хвилин збірка пакета Eclair завершиться. Ви знайдете ноду Eclair у папці +eclair-node/target+ у вигляді zip-файлу. Розпакуйте та запустіть його, дотримуючись інструкції:
 
 https://github.com/ACINQ/eclair#installing-eclair
 
-Congratulations! You have built Eclair from source and you are ready to code, test, fix bugs, and contribute to this project!
+Вітаємо! Ви зібрали Eclair з вихідного коду і тепер готові писати код, тестувати, виправляти помилки та робити свій внесок в цей проект!
 
 === Building a complete network of diverse Lightning Nodes
 
