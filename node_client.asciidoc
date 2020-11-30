@@ -907,21 +907,21 @@ https://github.com/ACINQ/eclair#installing-eclair
 
 Вітаємо! Ви зібрали Eclair з вихідного коду і тепер готові писати код, тестувати, виправляти помилки та робити свій внесок в цей проект!
 
-=== Building a complete network of diverse Lightning Nodes
+=== Побудова цілої мережі різноманітних Lightning-нод
 
-Our final example, presented in this section, will bring together all the various containers we have built to form a Lightning network made of diverse (LND, c-lightning, Eclair) node implementations. We will compose the network by connecting the nodes together and opening channels from one node to another. As the final step we route a payment across these channels.
+В останньому прикладі цього розділу ми об’єднаємо всі раніше створені контейнери і сформуємо мережу Lightning, яка складається з різноманітних реалізацій нод (LND, c-lightning, Eclair). Ми складемо мережу із з'єднаних між собою нод і відкриємо канали від однієї ноди до іншої. На останньому кроці ми відправимо платіж по цим каналам.
 
-In this example, we will replicate the Lighting network example from <<routing_on_a_network_of_payment_channels>>. Specifically, we will create four Lightning nodes named Alice, Bob, Wei, and Gloria. We will connect Alice to Bob, Bob to Wei, and Wei to Gloria. Finally, we will have Gloria create an invoice and have Alice pay that invoice. Since Alice and Gloria are not directly connected, the payment will be routed as an HTLC across all the payment channels.
+У цьому прикладі ми відтворимо приклад мережі Lightning із <<routing_on_a_network_of_payment_channels>>. Зокрема, ми створимо чотири Lightning-ноди з іменами Аліса, Боб, Вей та Глорія. Ми з'єднаємо Алісу з Бобом, Боба з Веєм, а Вея з Глорією. Нарешті, ми попросимо Глорію створити інвойс, а Аліса його сплатить. Оскільки Аліса та Глорія не будуть з'єднані безпосередньо, платіж буде відправлений як HTLC вздовж всіх платіжних каналів.
 
-==== Using docker-compose to orchestrate docker containers
+==== Використання docker-compose для організації контейнерів docker
 
-To make this example work, we will be using a _container orchestration_ tool that is available as a command called +docker-compose+. This command allows us to specify an application composed of several containers and run the application by launching all the cooperating containers together.
+Для роботи цього прикладу ми скористаємось інструментом _container orchestration_, що доступний за командою +docker-compose+. Ця команда дозволяє нам вказати застосунок, який складається з декількох контейнерів, і запустити його шляхом запуску всіх взаємодіючих між собою контейнерів разом.
 
-First, let's install +docker-compose+. The instructions depend on your operating system and can be found here:
+Спочатку встановимо +docker-compose+. Інструкції зі встановлення залежать від вашої операційної системи, і їх можна знайти тут:
 
 https://docs.docker.com/compose/install/
 
-Once you have completed installation, you can verify your installation by running docker-compose like this:
+Після завершення встановлення ви можете перевірити успішність встановлення, запустивши docker-compose наступним чином:
 
 ----
 $ docker-compose version
@@ -930,11 +930,11 @@ docker-compose version 1.21.0, build unknown
 
 ----
 
-The most common +docker-compose+ commands we will use are +up+ and +down+, e.g. +docker-compose up+.
+Найпоширенішими командами +docker-compose+, які ми будемо використовувати, є +up+ і +down+, наприклад +docker-compose up+.
 
-==== Docker-compose configuration
+==== Налаштування docker-compose
 
-The configuration file for +docker-compose+ is found in the +code/docker+ directory and is named +docker-compose.yml+. It contains a specification for a network and each of the four containers. The top looks like this:
+Файл налаштування +docker-compose+ знаходиться в каталозі +code/docker+ і називається +docker-compose.yml+. В ньому вказана назва мережі та перелік із чотирьох контейнерів. Початок файлу виглядає так:
 
 ----
 version: "3.3"
@@ -958,20 +958,20 @@ services:
     container_name: Alice
 ----
 
-The fragment above defines a network called +lnnet+ and a container called +bitcoind+ which will attach to the +lnnet+ network. The container is the same one we built at the beginning of this chapter. We expose three of the container's ports allowing us to send commands to it and monitor blocks and transactions. Next, the configuration specifies an LND container called "Alice". Further down you will also see specifications for containers called "Bob" (c-lightning), "Wei" (Eclair) and "Gloria" (LND again).
+Фрагмент вище визначає мережу під назвою +lnnet+ та контейнер з назвою +bitcoind+, який буде під'єднуватися до мережі +lnnet+. Контейнер +bitcoind+ - той самий, який ми створили на початку цього розділу. Ми відкриваємо три порти контейнера, що дозволить надсилати йому команди та моніторити блоки та транзакції. Далі конфігурація визначає контейнер LND під назвою "Аліса". Далі ви також побачите специфікації для контейнерів під назвами "Боб" (c-lightning), "Вей" (Eclair) і "Глорія" (знову LND).
 
-Since all these diverse implementations follow the Basis of Lightning Technologies (BOLT) specification and have been extensively tested for interoperability, they have no difficulty working together to build a Lightning network.
+Оскільки всі ці варіанти реалізації відповідають вимогам специфікації "Основи Технології Lightning" (BOLT) і були ретельно перевірені на сумісність, вони без проблем працюють разом для створення мережі Lightning.
 
-==== Starting the example Lightning network
+==== Запуск прикладу мережі Lightning
 
-Before we get started, we should make sure we're not already running any of the containers. If a new container shares the same name as one that is already running, then it will fail to launch. Use +docker ps+, +docker stop+, and +docker rm+ as necessary to stop and remove any currently running containers!
+Перш ніж розпочати, слід переконатися, що в нас не запущений жоден контейнер. Якщо новий контейнер має те саме ім'я, що і вже запущений, то його не вдасться запустити. За потреби використовуйте команди +docker ps+, +docker stop+ та +docker rm+, щоб зупинити та видалити запущені на даний момент контейнери!
 
 [TIP]
 ====
-Because we use the same names for these orchestrated docker containers, we might need to "clean up" to avoid any name conflicts.
+Оскільки ми використовуємо однакові назви для цих організованих docker-контейнерів, можливо, нам доведеться зробити "зачистку", щоб уникнути будь-яких конфліктів імен.
 ====
 
-To start the example, we switch to the directory that contains the +docker-compose.yml+ configuration file and we issue the command +docker-compose up+:
+Для запуску прикладу ми переходимо до каталогу, що містить конфігураційний файл +docker-compose.yml+, і виконуємо команду+docker-compose up+:
 
 ----
 $ cd code/docker
@@ -992,24 +992,24 @@ bitcoind    | Starting bitcoind...
 [...]
 ----
 
-Following the start up, you will see a whole stream of log files as each of the nodes starts up and reports its progress. It may look quite jumbled on your screen, but each output line is prefixed by the container name as seen above. If you wanted to watch the logs from only one container, you can do so in another terminal window by using the +docker-compose logs+ command with the +f+ (_follow_) flag and the specific container name:
+Після запуску ви побачите цілий потік логів, так як кожна із нод, що запускаються, повідомляє про свою роботу. На вашому екрані це може виглядати перемішаним, але кожен рядок виводу містить префікс з назвою контейнера, як показано вище. Якщо ви захочете переглянути лог лише з одного контейнера, то зможете зробити це в іншому терміналі за допомогою команди +docker-compose logs+ з флагом +f+ (_follow_) та ім'ям потрібного контейнера:
 
 ----
 $ docker-compose logs -f Alice
 ----
 
-==== Opening channels and routing a payment
+==== Відкриття каналів та маршрутизація платежа
 
-Our Lightning network should now be running. As we saw in the previous sections of this chapter, we can issue commands to a running docker container with the +docker exec+ command. Regardless of whether we started the container with +docker run+ or started a bunch of them with +docker-compose up+, we can still access containers individually using the docker commands.
+Тепер наша мережа Lightning має працювати. Як ви бачили в попередніх секціях цього розділу, ми можемо давати команди запущеному docker-контейнеру за допомогою команди +docker exec+. Незалежно від того, запустили ми контейнер за допомогою +docker run+ чи запустили групу контейнерів командою +docker-compose up+, ми все одно можемо взаємодіяти з кожним із контейнерів через команди docker.
 
-To make things easier, we have a little helper script that sets up the network, issues the invoice and makes the payment. The script is called +setup-channels.sh+ and is a Bash shell script. Keep in mind that this script is not very sophisticated! It "blindly" throws commands at the various nodes and doesn't do any error checking. If the network is running correctly and the nodes are funded, then it all works nicely. However, you have to wait a bit for everything to boot up and for the network to mine a few blocks and settle down. This usually takes 1 to 3 minutes. Once you see the block height at 102 or above on each of the nodes, then you are ready. If the script fails, you can stop everything (+docker-compose down+) and try again from the beginning. Or you can manually issue the commands found in the Bash script one by one and look at the results.
+Для спрощення у нас є маленький допоміжний скрипт, який налаштовує мережу, видає інвойс та здійснює платіж. Скрипт називається +setup-channels.sh+ і написаний мовою сценаріїв шеллу Bash. Майте на увазі, що цей скрипт не є надто вишуканим! Він "наосліп" кидає команди на різні ноди і не робить жодної перевірки помилок. Якщо мережа працює коректно і на нодах є кошти, то все це працює чудово. Однак вам доведеться трохи почекати, поки все завантажиться і буде змайнена певна кількість блоків. Зазвичай це займає від 1 до 3 хвилин. Як тільки ви побачите на кожній з нод блок висотою 102 або вище, скрипт готовий до запуску. Якщо скрипт не виконується, ви можете все зупинити (+docker-compose down+) і спробувати знову з самого початку. Або ви можете руками по черзі давати команди із Bash-скрипта та слідкувати за результатами.
 
 [TIP]
 ====
-Before running the +setup-channels.sh+ script note the following: Wait a minute or two after starting the network with +docker-compose+ to assure that all the services are running and all the wallets are funded. To keep things simple, the script doesn't check whether the containers are "ready". Be patient!
+Перед запуском скрипта +setup-channels.sh+ зверніть увагу на наступне: Зачекайте хвилину чи дві після запуску мережі за допомогою +docker-compose+, щоб переконатися, що всі служби працюють і на всіх гаманцях є кошти. Заради спрощення скрипт не перевіряє "готовність" контейнерів. Наберіться терпіння!
 ====
 
-Let's run the script to see its effect and then we will look at how it works internally. We use +bash+ to run it as a command:
+Давайте запустимо скрипт, щоб побачити його дію, а потім подивимось, як він працює зсередини. Ми використовуємо +bash+, щоб запустити скрипт:
 
 ----
 $ cd code/docker
@@ -1035,9 +1035,9 @@ Wait for channel establishment - 60 seconds for 6 blocks
 
 ----
 
-As you can see from the output, the script first gets the node IDs (public keys) for each of the four nodes. Then, it connects the nodes and sets up a 1,000,000 satoshi channel from each node to the next in the network.
+Як видно з виводу, скрипт спочатку отримує ідентифікатори (відкриті ключі) кожної із чотирьох нод. Потім він з'єднує ноди і відкриває канали на 1,000,000 сатоші від кожної ноди до наступної.
 
-Looking inside the script, we see the part that gets all the node IDs and stores them in temporary variables so that they can be used in subsequent command. It looks like this:
+Заглядаючи всередину скрипта, ми бачимо ту частину, яка отримує всі ідентифікатори нод і зберігає їх у тимчасових змінних, щоб можна було використовувати їх далі. Це виглядає так:
 
 ----
 alice_address=$(docker-compose exec -T Alice bash -c "lncli -n regtest getinfo | jq .identity_pubkey")
@@ -1046,81 +1046,81 @@ wei_address=$(docker-compose exec -T Wei bash -c "eclair-cli -s -j -p eclair get
 gloria_address=$(docker-compose exec -T Gloria bash -c "lncli -n regtest getinfo | jq .identity_pubkey")
 ----
 
-If you have followed the first part of the chapter you will recognise these commands and be able to "decipher" their meaning. It looks quite complex, but we will walk through it step-by-step and you'll quickly get the hang of it.
+Якщо ви були уважні в першій частині розділу, ви впізнаєте ці команди і зможете "розшифрувати" їх значення. Це виглядає дещо складним, але ми пройдемося покроково, і ви все швидко зрозумієте.
 
-The first command sets up a variable called +alice_address+ that is the output of a +docker-compose exec+ command. The +T+ flag tells docker-compose to not open an interactive terminal. An interactive terminal may mess up the output with things like color-coding of results. The +exec+ command is directed to the +Alice+ container and runs the +lncli+ utility since +Alice+ is an LND node. The +lncli+ command must be told that it is operating on the +regtest+ network and will then issue the +getinfo+ command to LND. The output from +getinfo+ is a JSON-encoded object, which we can parse by piping the output to the +jq+ command. The +jq+ command selects the +identity_pubkey+ field from the JSON object. The contents of the +identity_pubkey+ field are then output and stored in +alice_address+.
+Перша команда вносить результат команди +docker-compose exec+ у змінну +alice_address+. Флаг +T+ вказує +docker-compose+ не відкривати інтерактивний термінал, так як він може намішати у вивід такі речі, як кольорове кодування. Команда +exec+ спрямована контейнеру +Alice+ і запускає утиліту +lncli+, оскільки +Alice+ є нодою LND. Команді +lncli+ слід вказати, що вона працює в мережі +regtest+, і що вона має виконати команду +getinfo+. Вивід +getinfo+ є закодованим JSON-об'єктом, який ми можемо розпарсити, передавши його команді +jq+ через пайп. Команда +jq+ бере поле +identity_pubkey+ з JSON-об'єкта. Потім вміст поля +identity_pubkey+ виводиться і зберігається в змінній +alice_address+.
 
-The following three lines do the same for each of the other nodes. Because they are different node implementations (c-lightning, Eclair), their command-line interface is slightly different, but the general principle is the same: Use the command utility to ask the node for its public key (node ID) information and parse it with +jq+, storing it in a variable for further use later.
+Наступні три рядки виконують те ж саме для інших нод. Оскільки це інші реалізації нод (c-lightning, Eclair), їхній інтерфейс командного рядка дещо відрізняється, але загальний принцип однаковий: за допомогою утиліти командної строки запитати у ноди інформацію про її відкритий ключ (ідентифікатор ноди), витягнути ідентифікатор за допомогою +jq+ та зберегти його у змінній для подальшого використання.
 
-Next, we tell each node to establish a network connection to the next node and open a channel:
+Далі ми вказуємо кожній ноді встановити мережеве з'єднання з наступною нодою і відкрити канал:
 
 ----
 docker-compose exec -T Alice lncli -n regtest connect ${bob_address//\"}@Bob
 docker-compose exec -T Alice lncli -n regtest openchannel ${bob_address//\"} 1000000
 ----
 
-Both of the commands are directed to the +Alice+ container since the channel will be opened _from_ +Alice+ _to_ +Bob+, and +Alice+ will initiate the connection.
+Обидві команди відносяться до контейнера +Alice+, оскільки канал буде відкритий _від_ +Alice+ _до_ +Bob+, тому +Alice+ ініціює підключення.
 
-As you can see, in the first command we tell +Alice+ to connect to the node +Bob+. Its node ID is stored in +${bob_address}+ and its IP address can be resolved from the name +Bob+, hence +@Bob+ is used as the network identifier/address. We do not need to add the port number (9375) because we are using the default Lightning ports.
+Як бачимо, у першій команді ми наказуємо +Alice+ підключитися до ноди +Bob+. Ідентифікатор ноди +Bob+ зберігається в +${bob_address}+, а її IP-адресу можна дізнатись по імені +Bob+, отже +@Bob+ використовується в якості мережевого ідентифікатора/адреси. Нам не потрібно вказувати номер порту (9375), оскільки ми використовуємо порти Lightning за замовчуванням.
 
-Now that +Alice+ is connected, we open a 1,000,000 satoshi channel to +Bob+ with the +openchannel+ command. Again, we refer to +Bob+'s node by the node ID, i.e. the public key.
+Тепер коли нода +Alice+ підключена до ноди +Bob+, ми відкриваємо канал на 1,000,000 сатоші до +Bob+ командою +openchannel+. Ми посилаємось на ноду +Bob+ за ідентифікатором ноди, тобто за відкритим ключем.
 
-We do the same with the other nodes, setting up connections and channels. Each node type has a slightly different syntax for these commands, but the overall principle is the same:
+Ми робимо те ж саме з іншими нодами - налаштовуємо мережеві з'єднання та канали. Кожен тип ноди має дещо відмінний синтаксис команд, але загальний принцип однаковий:
 
-To Bob's node (c-lightning) we send these commands:
+Ноді Боба (c-lightning) ми надсилаємо наступні команди:
 ----
 docker-compose exec -T Bob lightning-cli connect ${wei_address//\"}@Wei 
 docker-compose exec -T Bob lightning-cli fundchannel ${wei_address//\"} 1000000
 ----
 
-To Wei's node (Eclair) we send:
+Ноді Вея (Eclair) ми надсилаємо:
 ----
 docker-compose exec -T Wei eclair-cli -p eclair connect --uri=${gloria_address//\"}@Gloria
 docker-compose exec -T Wei eclair-cli -p eclair open --nodeId=${gloria_address//\"} --fundingSatoshis=1000000
 ----
 
-At this point we create a new invoice for 10,000 satoshis on Gloria's node:
+Тепер ми створимо новий інвойс на 10,000 сатоші на ноді Глорії:
 
 ----
 gloria_invoice=$(docker-compose exec -T Gloria lncli -n regtest addinvoice 10000 | jq .payment_request)
 ----
 
-The +addinvoice+ command creates an invoice for the specified amount in satoshis and produces a JSON object with the invoice details. From that JSON object we only need the actual bech32-encoded payment request, which we extract with +jq+.
+Команда +addinvoice+ створює інвойс на вказану суму в сатоші і видає JSON-об'єкт з деталями інвойса. З цього JSON-об’єкта нам потрібен лише закодований у bech32 запит на оплату, який ми дістаємо за допомогою +jq+.
 
-Next, we have to wait. We just created a bunch of channels. Hence, our nodes broadcast several funding transactions. The channels can't be used until the funding transactions are mined and collect 6 confirmations. Since our Bitcoin +regtest+ blockchain is set to mine blocks every ten seconds, we have to wait 60 seconds for all the channels to be ready to use.
+Далі нам слід зачекати. Ми щойно створили купу каналів, тому наші вузли наразі транслюють по мережі кілька транзакцій фінансування. Каналами не можна користуватися, доки транзакції фінансування не будуть змайнені та не отримають 6 підтверджень. Оскільки наш +regtest+ Біткоїн-блокчейн налаштований на майнинг блоків кожні десять секунд, нам доведеться зачекати 60 секунд, поки всі канали будуть готові до використання.
 
-The final command is the actual invoice payment. We connect to Alice's node and present Gloria's invoice for payment.
+Фінальною командою є сплата інвойсу. Ми підключаємось до ноди Аліси і надаємо їй інвойс Глорії для оплати.
 
 ----
 docker-compose exec -T Alice lncli -n regtest payinvoice --json --inflight_updates -f ${gloria_invoice//\"}
 ----
 
-We ask Alice's node to pay the invoice, but also ask for +inflight_updates+ in +json+ format. That will give us detailed output about the invoice, the route, the HTLCs, and the final payment result. We can study this additional output and learn from it!
+Ми просимо ноду Аліси оплатити інвойс, а також просимо видати +inflight_updates+ у форматі +json+. Це дасть нам детальну інформацію про інвойс, маршрут, HTLC та остаточний результат оплати. Ми можемо вивчити цей додатковий вивід і повчитися на ньому!
 
-Since Alice's node doesn't have a direct channel to Gloria, her node has to find a route. There is only one viable route here (Alice->Bob->Wei->Gloria), which Alice will be able to discover now that all the channels are active and have been advertised to all the nodes by the Lightning gossip protocol. Alice's node will construct the route and create an onion packet to establish HTLCs across the channels. All of this happens in a fraction of a second and Alice's node will report the result of the payment attempt. If all goes well, you will see the last line of the JSON output showing:
+Оскільки нода Аліси не має прямого каналу до Глорії, її нода має знайти маршрут. Тут є лише один життєздатний маршрут (Аліса->Боб->Вей->Глорія), який Аліса зможе знайти, коли всі канали активні і анонсовані всім нодам за протоколом пліток Lightning. Нода Аліси побудує маршрут і створить цибулевий пакет для встановлення HTLC вздовж каналів. Все це відбувається за долю секунди, і нода Аліси повідомить результат спроби оплати. Якщо все піде добре, ви побачите останній рядок JSON виводу:
 
 ----
 "failure_reason": "FAILURE_REASON_NONE"
 ----
 
-This is arguably a weird message, but the fact that there was no failure reason, in a round-about way, implies that the operation was a success!
+Безперечно, це дивне повідомлення, але той факт, що не було причини невдачі, означає, що операція пройшла успішно!
 
-Scrolling above that unusual message you will see all the details of the payment. There is a lot to review, but as you gain understanding of the underlying technology, more and more of that information will become clear. You are invited to revisit this example later.
+Проскроливши вище цього незвичного повідомлення, ви побачите всі деталі платежу. Там є багато речей для розгляду, але по мірі розуміння технології, що лежить в основі, все більше з тієї інформації стане зрозумілим. Пропонуємо переглянути цей приклад пізніше.
 
-Of course, you can do a lot more with this test network than a 3-channel, 4-node payment. Here are some ideas for your experiments:
+Звісно, за допомогою нашої тестової мережі ви можете зробити набагато більше, ніж платіж через 3 канали і 4 ноди. Ось кілька ідей для експериментів:
 
-* Create a more complex network by launching many more nodes of different types. Edit the +docker-compose.yml+ file and copy sections, renaming containers as needed.
+* Створіть більш складну мережу, запустивши набагато більше нод різних типів. Відредагуйте файл +docker-compose.yml+ та скопіюйте секції, перейменувавши контейнери за необхідності.
 
-* Connect the nodes in more complex topologies: circular routes, hub-and-spoke, or full mesh.
+* З'єднуйте ноди в більш складні топології: кільцеві маршрути, зірка або сітка.
 
-* Run lots of payments to exhaust channel capacity. Then run payments in the opposite direction to rebalance the channels. See how the routing algorithm adapts.
+* Проведіть багато платежів, щоб виснажити місткість каналу. Потім виконайте платежі в зворотному напрямку, щоб збалансувати канали. Подивіться, як адаптується алгоритм маршрутизації.
 
-* Change the channel fees to see how the routing algorithm negotiates multiple routes and what optimizations it applies. Is a cheap, long route better than an expensive, short route?
+* Змініть комісії каналу, щоб побачити, як алгоритм маршрутизації обирає серед кількох маршрутів і які оптимізації застосовує. Що краще - дешевий довгий маршрут чи дорогий короткий?
 
-* Run a circular payment from a node back to itself in order to rebalance its own channels. See how that affects all the other channels and nodes.
+* Запустіть кільцевий платіж від ноди назад до себе, щоб збалансувати власні канали. Подивіться, як це впливає на всі інші канали та ноди.
 
-* Generate hundreds or thousands of small invoices in a loop and then pay them as fast as possible in another loop. Measure how many transactions per second you can squeeze out of this test network.
+* Генеруйте сотні або тисячі маленьких інвойсів у циклі, а потім сплачуйте їх якнайшвидше в іншому циклі. Виміряйте, скільки транзакцій в секунду ви зможете виконати у цій тестовій мережі.
 
-=== Conclusion
+=== Висновок
 
-In this chapter we looked at various projects that implement the BOLT specifications. We built containers to run a sample Lightning network and learned how to build each project from source code. You are now ready to explore further and dig deeper. 
+У цьому розділі ми розглянули різні проекти, які реалізують специфікації BOLT. Ми створили контейнери для запуску тестової мережі Lightning і навчилися збирати кожен проект із вихідного коду. Тепер ви готові досліджувати далі і копати глибше.

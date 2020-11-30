@@ -30,7 +30,7 @@
 | [Вступ](01_introduction.asciidoc) | ###### | :mag: | 100% |
 | [Починаємо](02_getting_started.asciidoc) | ############ | :mag: | 100% |
 | [Основи LN (Як працює LN)](03_how_ln_works.asciidoc) | ########################### | :mag: | 100% |
-| [Ноди (LN Клієнти)](node_client.asciidoc) | #################### | :mag: | 75% |
+| [Ноди (LN Клієнти)](node_client.asciidoc) | #################### | :mag: | 100% |
 | [Operating a Node](node_operations.asciidoc) | ############################ | :bookmark_tabs: |
 | PART 2 | PART 2 | PART2 |
 | [Intro to LN Routing (HTLCs)](routing.asciidoc) | ##################### | :lock_with_ink_pen: |
