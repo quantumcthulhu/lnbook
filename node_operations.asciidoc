@@ -1,64 +1,59 @@
 [[operating_ln_node]]
-== Operating a Lightning Network Node
+== Керування Нодою Lightning Network
 
-After having read this far, you have probably set up a Lightning wallet. In this chapter we will take things one step further and set up a full Lightning node. In addition to setting one up, we will learn how to operate it and maintain it over time.
+Якщо ви дійшли до цього місця, то вже мабуть налаштували Lightning-гаманець. У цьому розділі ми зробимо ще один крок вперед і налаштуємо повну Lightning-ноду. Окрім налаштування ми дізнаємося, як нею керувати та підтримувати впродовж часу.
 
-There are many reasons why you might want to set up your own Lightning node. They include:
+Є багато причин, чому ви можете бажати підняти власну Lightning-ноду. Серед них:
 
-* To be a full, active participant in the Lightning Network, not just an end-user.
-* To run an e-commerce store or receive income via Lightning payments.
-* To earn income from Lightning routing fees.
-* To develop new services, applications, or plugins for the Lightning Network.
-* To increase your financial privacy while using Lightning.
-* To use some apps built on top of Lightning, like Lightning-powered Instant Messaging apps.
-* For financial freedom, independence, and sovereignty.
+* Бути повноцінним, активним учасником Lightning Network, а не просто кінцевим споживачем.
+* Запустити магазин електронної комерції або отримувати Lightning-платежі.
+* Заробляти на комісіях за маршрутизацію.
+* Розробляти нові сервіси, застосунки або плагіни для Lightning Network.
+* Підвищити свою фінансову конфіденційність шляхом використання Lightning.
+* Для використання деяких програм, що працюють поверх Lightning, наприклад, мессенджерів через Lightning.
+* Заради фінансової свободи, незалежністі та суверенітету.
 
-There are costs associated with running a Lightning Network node. You need a computer, a permanent Internet connection, lots of disk space, and lots of time!
-Operational costs will include electricity expenses.
+Утримання ноди Lightning Network вимагає певних витрат. Вам потрібен комп’ютер, постійне з’єднання з Інтернетом, багато місця на диску та багато часу!
+Операційні витрати включатимуть витрати на електроенергію.
 
-But the skills you will learn from this experience are valuable and can be applied to a variety of other tasks too.
+Проте навички, які ви отримаєте завдяки цьому досвіду, мають свою цінність і можуть бути застосовані до багатьох інших завдань.
 
-Let's get started!
+Давайте розпочнемо!
 
 [NOTE]
 ====
-It is important that one sets her or his own expectations correctly on accurate facts. 
-If one plans to operate a Lightning node _solely_ to gain income by earning routing fees, 
-please do your homework diligently first. Running a profitable business by operating a Lighning node is 
-defintely _not_ easy. Calculate all your initial and ongoing costs in a spreadsheet. Study Lightning Network statistics carefully. 
-What is the current payment volume? What is the volume per node? What are the current average routing fees? Consult forums and ask
-for advice or feedback from other community members who have already gained real-world experience. Form your own educated opinion only
-_after_ you have done this due-diligence exercise. Most people will find their motivation for running a node not in financial gain 
-but somewhere else.
+Важливо мати правильні очікування, виходячи із вірних фактів.
+Якщо ви плануєте керувати Lightning-нодою _виключно_ для отримання доходу від комісій за маршрутизацію платежів, будь ласка, спочатку старанно виконайте домашнє завдання. Вести прибутковий бізнес, керуючи нодою Lightning точно _не_ легко. Розрахуйте всі свої початкові та постійні витрати в електронній таблиці. Уважно вивчіть статистику Lightning Network.
+Який поточний обсяг платежів? Який обсяг на ноду? Які в середньому поточні комісії за маршрутизацію? Спілкуйтесь на форумах, запитуйте
+поради та відгуки від досвідчених членів спільноти. Сформуйте свою власну думку _після_ того, як ретельно виконаєте вправи. Більшість людей бачать власну мотивацію керувати нодою не у фінансовій вигоді, а в чомусь іншому.
 ====
 
-=== Choosing your platform
+=== Вибір платформи
 
-There are many ways you can run a Lightning node ranging from a small mini-PC hosted in your home or a dedicated server to a hosted server in the cloud. The method you choose will depend on the resources you have and how much money you want to spend.
+Є багато різних варіантів місць, де ви можете підняти Lightning-ноду - на невеликому міні-ПК, розміщеному у вас вдома, на виділеному сервері або у хмарному хостингу. Обраний вами спосіб залежатиме від наявних у вас ресурсів і від того, скільки грошей ви хочете витратити.
 
+==== Чому надійність важлива для роботи Lightning-ноди?
 
-==== Why is reliability important for running a Lightning Node?
+Для Біткоїна апаратне забезпечення не має особливого значення, якщо тільки мова не йде про майнинг.
+Програмне забезпечення ноди Bitcoin Core можна запускати на будь-якій машині, яка відповідає його мінімальним вимогам. Для отримання платежів не потрібно бути онлайн; лише для відправлення.
+Якщо Біткоїн-нода не працює протягом тривалого періоду часу, користувач може просто її перезавантажити, і як тільки вона підключиться до мережі, то повторно синхронізує блокчейн.
 
-In Bitcoin hardware is not particularly important unless one is specifically running a mining node.
-The Bitcoin Core node software can be run on any machine that meets its minimum requirements and does not need to be online to receive payments; only to send them.
-If a Bitcoin node goes down for an extended period of time, the user can simply reboot the node and once it connects to the rest of the network, it will re-sync the blockchain.
+У Lightning користувач повинен бути в мережі, щоб надсилати _і_ отримувати платежі. Якщо користувач Lightning перебуває оффлайн, він не може приймати жодних платежів, а його відкриті інвойси не можуть бути оплачені.
+Крім того, відкриті канали оффлайн ноди не можуть використовуватися для маршрутизації платежів. Ваші партнери по каналу помітять, що ви перебуваєте оффлайн і не зможуть зв’язатись з вами для здійснення платежу. Якщо ви перебуваєте оффлайн занадто часто, вони можуть розцінити заблоковані у ваших з ними каналах біткоїни, як недостатньо використовувані, і можуть закрити ці канали. Ми вже обговорювали випадок протокольної атаки, коли ваш партнер по каналу намагається вдатися до шахрайства, транслюючи в мережу попередню транзакцію зобов'язання. Якщо ви перебуваєте оффлайн і не слідкуєте за вашими каналами, то спроба крадіжки може мати успіх, і ви не встигнете звернутися до рятівних засобів після закінчення терміну блокування за часом.
+Отже, надійність надзвичайно важлива для Lightning-ноди.
 
-In Lightning, however, the user needs to be online both to send _and_ to receive payments. If the Lightning user is offline it cannot receive any payments from anyone and thus its open invoices cannot be fulfilled.
-Furthermore, the open channels of an offline node cannot be used to route payments. Your channel partners will notice that you are offline and cannot contact you to route a payment. If you are offline too often, they may consider the Bitcoin locked up in their channels with you to be underutilized capacity, and may close those channels. We already discussed the case of a protocol attack where your channel partner tries to cheat you by submitting an earlier commitment transaction. If you are offline and your channels aren't being monitored, then the attempted theft could succeed and you will have no recourse once the timelock expires.
-Hence, node reliability is extremely important for a Lightning node.
+Існують також проблеми з відмовою обладнання та втратою даних. У Біткоїні апаратний збій може бути тривіальною проблемою, якщо у користувача є резервна копія мнемонічної фрази або приватних ключів. Біткоїн-гаманець і біткоїни в ньому можна легко відновити за допомогою закритих ключів на новому комп'ютері. Більшість інформації можна повторно завантажити з блокчейну.
 
-There are also the issues of hardware failure and loss of data. In Bitcoin, a hardware failure can be a trivial problem if the user has a backup of their mnemonic phrase or private keys. The Bitcoin wallet and the bitcoin inside the wallet can be easily restored from the private keys on a new computer. Most information can be re-downloaded from the blockchain.
+На відміну від цього, у Lightning інформація про канали користувача, включаючи транзакції зобов’язань та секрети відкликання, не є публічною і зберігається лише на апаратному забезпеченні окремого користувача.
+Тому збої програмного та апаратного забезпечення в мережі Lightning можуть легко призвести до втрати коштів.
 
-In contrast, in Lightning the information about the user's channels, including the commitment transactions and revocation secrets, are not publicly known and are only stored on the individual user's hardware.
-Thus, software and hardware failures in the Lightning Network can easily result in loss of funds.
+==== Які є типи обладнання для Lightning-нод?
 
-==== What are the types of hardware Lightning Nodes?
+* **Комп’ютери Загального Призначення**: ноду Lightning Network можна запустити на домашньому комп’ютері чи ноутбуці під управлінням Windows, Mac OS або Linux. Зазвичай вона запускається разом з Біткоїн-нодою.
+* **Виділене Обладнання**: Lightning-ноду також можна запустити на спеціальному обладнанні, такому як Raspberry Pi, Rock64 або міні-ПК. При цьому зазвичай запускається стек програмного забезпечення, включаючи Біткоїн-ноду та інші програми. Такий підхід популярний, адже в цьому випадку обладнання використовується виключно для запуску та обслуговування Lightning-ноди, і зазвичай воно налаштовується за допомогою інсталяційного "помічника".
+* **Попередньо Налаштоване Обладнання**: ноду Lightning Network також можна запустити на спеціальному обладнанні, підібраному та налаштованому для цього. Сюди входять рішення "з коробки" у вигляді комплекту для збірки або готові під ключ.
 
-* **General Purpose Computers**: a Lightning Network node can be run on a home computer or laptop running Windows, Mac OS, or Linux. Typically this is run alongside a Bitcoin node.
-* **Dedicated Hardware**: a Lightning Node can also be run on dedicated hardware like a Raspberry Pi, Rock64, or mini-PC. This setup would usually run a software stack including a Bitcoin node and other applications. This setup is popular as the hardware is dedicated to running and maintaining the Lightning node only and is usually set up with an installation "helper".
-* **Pre-Configured Hardware**: a Lightning Network node can also be run on purpose-built hardware specifically selected and configured for it. This would include "out-of-the-box" Lightning node solutions that can be purchased as a kit or a turn-key system.
-
-==== Running in the "cloud"
+==== Запуск в "хмарі"
 
 _Virtual Private Server_ (VPS) and "cloud computing" services such as Microsoft Azure, Google Cloud, Amazon Web Services (AWS), or DigitalOcean are quite affordable and can be set up very quickly. A Lightning node can be hosted for between $20 and $40 per month on such a service.
 
