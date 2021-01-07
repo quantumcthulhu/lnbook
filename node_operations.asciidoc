@@ -49,151 +49,150 @@
 
 ==== Які є типи обладнання для Lightning-нод?
 
-* **Комп’ютери Загального Призначення**: ноду Lightning Network можна запустити на домашньому комп’ютері чи ноутбуці під управлінням Windows, Mac OS або Linux. Зазвичай вона запускається разом з Біткоїн-нодою.
+* **Комп’ютери Загального Призначення**: ноду Lightning Network можна запустити на домашньому комп’ютері чи на ноутбуці під управлінням Windows, Mac OS або Linux. Зазвичай вона запускається разом з Біткоїн-нодою.
 * **Виділене Обладнання**: Lightning-ноду також можна запустити на спеціальному обладнанні, такому як Raspberry Pi, Rock64 або міні-ПК. При цьому зазвичай запускається стек програмного забезпечення, включаючи Біткоїн-ноду та інші програми. Такий підхід популярний, адже в цьому випадку обладнання використовується виключно для запуску та обслуговування Lightning-ноди, і зазвичай воно налаштовується за допомогою інсталяційного "помічника".
 * **Попередньо Налаштоване Обладнання**: ноду Lightning Network також можна запустити на спеціальному обладнанні, підібраному та налаштованому для цього. Сюди входять рішення "з коробки" у вигляді комплекту для збірки або готові під ключ.
 
 ==== Запуск в "хмарі"
 
-_Virtual Private Server_ (VPS) and "cloud computing" services such as Microsoft Azure, Google Cloud, Amazon Web Services (AWS), or DigitalOcean are quite affordable and can be set up very quickly. A Lightning node can be hosted for between $20 and $40 per month on such a service.
+_Віртуальний Приватний Сервер_ (VPS) та послуги "хмарних обчислень", такі як Microsoft Azure, Google Cloud, Amazon Web Services (AWS) або DigitalOcean, цілком доступні і можуть бути налаштовані дуже швидко. Хостинг Lightning-ноди може коштувати від 20 до 40 доларів на місяць на такому сервісі.
 
-However, as the saying goes, "'Cloud' is just other people's computers". Using these services means running your node on other people's computers. This brings along the corresponding advantages and disadvantages. The key advantages are convenience, efficiency, uptime, and possibly even cost. The cloud operator manages and runs the node to a high degree automatically providing you with convenience and efficiency. They provide excellent uptime and availability, often much better than what an individual can achieve at home. If you consider that just the electricity cost of running a server in many western countries is around $10 per month, then add to that the cost of network bandwidth and the hardware itself, the VPS offering becomes financially competetive. Lastly, with a VPS you need no space for a PC at home, and don't have any issues with PC noise or heat.
-On the other hand there are several notable disadvantages. A Lightning node running in the "cloud" will always be less secure and less private than one running on your own computer. Additionally, these cloud computing services are very centralized. The vast majority of Bitcoin and Lightning nodes running on such services are located in a handful of data centers in Virginia, Sunnyvale, Seattle, London, and Frankfurt. When the networks or data centers of these providers have service problems, it affects thousands of nodes on so-called "decentralized" networks.
+Однак, як кажуть, "'хмара' - це просто комп'ютери, які належать іншим людям". Використання цих сервісів означає запуск вашої ноди на комп’ютерах інших людей. Це призводить до відповідних переваг та недоліків. Серед ключових переваг - зручність, ефективність, аптайм та, можливо, навіть вартість. Хмарний оператор керує та запускає ноду у більшій мірі автоматично, забезпечуючи вам зручність та ефективність. Вони забезпечують прекрасний аптайм та доступність, часто набагато краще тих, що можна досягти вдома. Якщо врахувати, що витрати лише на електроенергію для роботи сервера в багатьох західних країнах становлять близько 10 доларів на місяць, то, додавши до цього вартість пропускної здатності мережі та самого обладнання, пропозиція VPS стає фінансово конкурентоспроможною. Нарешті, з VPS вам не потрібне місце для ПК вдома, і у вас не виникає проблем із шумом або нагріванням ПК.
+З іншого боку, такий підхід має кілька помітних недоліків. Lightning-нода, що працює в "хмарі", завжди буде менш захищеною і менш приватною, ніж нода на вашому власному комп'ютері. Крім того, послуги хмарних обчислень дуже централізовані. Переважна більшість нод Біткоїн і Lightning, що працюють на таких сервісах, розташовані в декількох датацентрах у Вірджинії, Саннівейлі, Сіетлі, Лондоні та Франкфурті. Коли мережі або датацентри цих провайдерів знаходяться на сервісному обслуговуванні, це впливає на тисячі нод у так званих "децентралізованих" мережах.
 
-If you have the possibility and capacity of running a node on your own computer at home or in your office, then this might be preferable to running it
-in the cloud. Nonetheless, if running your own server is not an option, by all means consider running one on a VPS.
+Якщо у вас є можливість та пропускна здатність мережі для роботи ноди на власному комп’ютері вдома або в офісі, то це може бути ліпшим варіантом, ніж запуск її в хмарі. Тим не менше, якщо варіант із власним сервером є неможливим, неодмінно розгляньте можливість роботи на VPS.
 
-==== Running a node at home
+==== Запуск ноди вдома
 
-If you have a reasonable capacity internet link at home or in your office, you can certainly run a Lightning node there. Any "broadband" connection is sufficient for the purpose of running a lightweight node, and a fast connection will allow you to run a Bitcoin full node too.
+Якщо у вас вдома чи в офісі є Інтернет-з'єднання з прийнятною пропускною здатністю, ви можете запустити Lightning-ноду там. Будь-якого "широкосмугового" з'єднання буде достатньо для запуску легкої ноди, а швидке з'єднання дозволить вам також запустити повну Біткоїн-ноду.
 
-While you can run a Lightning node (and even a Bitcoin node) on your laptop, it will become annoying quite fast. These programs consume your computer's resources and need to run 24/7. Your user applications like your browser or your spreadsheet will find themselves competing against the Lightning background services for your computer's resources. In other words, your browser and other desktop workloads will be slowed down.
-And when your word processing app freezes up your laptop, your Lightning node will go down as well. Furthermore, you should never turn off your laptop.
-All this combined together results in a set-up that is not ideal. The same will apply to your daily-use personal desktop PC.
+Хоча ви можете запустити Lightning-ноду (і навіть Біткоїн-ноду) на своєму ноутбуці, це почне дратувати вас досить швидко. Ці програми споживають ресурси вашого комп’ютера і повинні працювати цілодобово 24/7. Ваші програми, такі як браузер або електронна таблиця, будуть конкурувати з фоновими сервісами Lightning за ресурси вашого комп’ютера. Іншими словами, ваш браузер та інші робочі програми почнуть тормозити.
+І коли ваш текстовий редактор підвісить ваш ноутбук, ваша Lightning-нода також впаде. Крім того, вам ніколи не слід вимикати ноутбук.
+Все це в сукупності призводить до ситуації, далекої від ідеалу. Те саме стосуватиметься вашого настільного ПК для щоденного користування.
 
-Instead, most users will choose to run a node on a dedicated computer. Fortunately, you don't need a "server" class computer to do this. You can run a Lightning node on a mini-PC, such as a Raspberry Pi or an Atom-based fanless PC. These are simple computers which are commonly used as a media server or home automation hub. They are relatively inexpensive, costing between $50 and $150 USD at the time of this writing. To run on a mini-PC, you will need an external USB hard drive, which again is relatively inexpensive, costing approximately $50 USD. The advantage of a dedicated mini-PC as a platform for Lightning and Bitcoin nodes is that it can run continuously, silently, and unobtrusively on your home network, tucked behind your router or TV. No one will even know that this little box is actually part of a global banking system!
+Натомість більшість користувачів оберуть запустити ноду на окремому комп’ютері. На щастя, для цього вам не потрібен комп’ютер "серверного" класу. Ви можете запустити Lightning-ноду на міні-ПК, такому як Raspberry Pi або ПК на базі Atom без кулерів. Це прості комп’ютери, які зазвичай використовуються в якості медіа-серверу або хабу для автоматизації будинку. Вони відносно недорогі, ціною від 50 до 150 доларів США на момент написання цього тексту. Для роботи міні-ПК вам знадобиться зовнішній жорсткий USB-диск, який знову ж таки відносно недорогий і коштує приблизно 50 доларів США. Перевага окремого міні-ПК як платформи для Lightning- та Біткоїн-нод полягає в тому, що він може працювати безперервно, безшумно та ненав’язливо у вашій домашній мережі, сховавшись за вашим роутером або телевізором. Ніхто навіть не дізнається, що ця маленька коробочка насправді є частиною світової банківської системи!
 
-==== What hardware is required to run a Lightning node?
+==== Яке обладнання необхідне для запуску ноди Lightning?
 
-At a minimum, the following will be required to run a Lightning Node:
+Як мінімум, для запуску Lightning-ноди потрібно:
 
-* **CPU**: sufficient processing power will be required to run a Bitcoin node, which will continuously download and validate new blocks. The user also needs to consider the Initial Block Download (IBD) when setting up a new Bitcoin node, which can take anywhere from several hours to several days. A 2-core or 4-core CPU is recommended.
+* **CPU**: для запуску Біткоїн-ноди потрібна процесорна потужність достатня для постійного завантаження та верифікації нових блоків. Користувач також має врахувати початкове завантаження блоків при налаштуванні нової Біткоїн-ноди, яке може зайняти від кількох годин до декількох днів. Рекомендується 2- або 4-ядерний процесор.
 
-* **RAM**: a system with 2GB of RAM will _barely_ run both Bitcoin and Lightning nodes. It will perform much better with at least 4GB of RAM. The Initial Block Download will be especially challenging with less than 4GB of RAM. More than 8GB of RAM is unnecessary, because the CPU is the greater bottleneck for these types of services, due to cryptographic operations such as signature validation.
+* **RAM**: система з 2 ГБ оперативної пам’яті буде _ледве_ тягнути Біткоїн- і Lightning-ноди. 4 ГБ буде набагато краще. Початкове завантаження блоків буде особливо важким завданням для систем з менше 4 ГБ оперативної пам'яті. Більше 8 ГБ оперативної пам'яті не потрібно, оскільки вузьким місцем для таких сервісів є центральний процесор через криптографічні операції, такі як перевірка підписів.
 
-* **Storage Drive**: this can be a Hard Drive or an Solid State Drive (SSD). An SSD will be significantly quicker for running a Bitcoin node. Most of the storage is used for the Bitcoin blockchain, which occupies more than 340GB (as of September 2020).
+* **Накопичувач**: це може бути жорсткий диск або твердотільний накопичувач (SSD). SSD-диск буде значно швидшим для Біткоїн-ноди. Більшу частину диска займатиме блокчейн Біткоїна, який займає понад 340 ГБ (станом на вересень 2020 року).
 
-* **Internet Connection**: a reliable internet connection will be required to download new Bitcoin blocks, as well as to communicate with other Lightning peers. During operation the estimated data use ranges from 10GB to 100GB per month, depending on configuration. At startup a Bitcoin full node downloads the full blockchain, 340GB as of September 2020.
+* **Інтернет-з'єднання**: для завантаження нових блоків Біткоїну, а також для комунікації з іншими пірами Lightning потрібне надійне підключення до Інтернету. Під час роботи передбачається скачування від 10 ГБ до 100 ГБ даних на місяць залежно від конфігурації. При першому запуску повна Біткоїн-нода завантажує блокчейн розміром 340 Гб станом на вересень 2020 р.
 
-* **Power Supply**: a reliable power supply is required as Lightning nodes need to be online at all times. A power failure will cause in-progress payments to fail. For heavy duty routing nodes, a backup or uninterruptible power supply (UPS) is useful in the case of power outages.
-Ideally, you should connect your Internet router to this UPS as well.
+* **Блок Живлення**: потрібне надійне джерело живлення, оскільки Lightning-ноди повинні бути постійно онлайн. Збій живлення спричиняє збій незавершених платежів. Для нод маршрутизації з великим навантаженням бажано мати резервне джерело живлення або джерело безперебійного живлення (UPS) на випадок відключення електроенергії.
+В ідеалі вам також слід підключити свій Інтернет-роутер до цього UPS.
 
-* **Backup**: Backup is crucial as a failure can result in loss of data and hence in loss of funds.
-The user will want to consider some kind of data backup solution. This could be a cloud-based automated backup to a server or web service the user controls. Alternatively, it could be an automated local hardware backup, such as a second hard drive. For best results, both local and remote backup can be combined.
+* **Бекап (Резервне Копіювання)**: Резервне копіювання має вирішальне значення, оскільки збій може призвести до втрати даних, а отже до втрати коштів.
+Користувачу знадобиться якесь рішення для бекапу. Це може бути автоматизоване резервне копіювання на сервер або веб-сервіс, керований користувачем. Також це може бути автоматизований локальний бекап на інше обладнанні, наприклад на другий жорсткий диск. Для найкращих результатів можна поєднувати як локальне, так і віддалене резервне копіювання.
 
-==== Switching server configuration in the cloud
+==== Переключення конфігурації хмарного сервера
 
-When renting a cloud server, it is often cost effective to change the configuration between two phases of operation: A faster CPU and faster storage will be needed during the Initial Block Download (e.g. the first day). After the blockchain has synced, the CPU and storage speed requirements are much less, so the performance can be downgraded to a more cost-effective level.
+При оренді хмарного сервера часто економічно вигідно змінювати конфігурацію між двома фазами роботи: під час початкового завантаження блоків (наприклад, у перший день) знадобиться швидший процесор і швидший диск. Після синхронізації блокчейну вимоги до процесора та швидкості диску набагато менше, тому параметри сервера можна знизити до більш економічного рівня.
 
-For example, on Amazon's cloud, we would use a 8-16GB RAM, 8-core CPU (e.g. t3-large or m3.large) and faster 400GB SSD (1000+ provisioned IOPS) for the Initial Block Download (IBD), reducing its time to just 6-8 hours. Once that is complete, we would switch the server instance to a 2GB RAM, 2-core CPU (e.g. t3.small) and storage to a general purpose 1TB HDD. This will cost about the same as if you ran it on the slower server the entire time, but it will get you up and running in less than a day instead of having to wait almost a week for the IBD.
+Наприклад, у хмарі Amazon для початкового завантаження блоків ми б використовували конфігурацію з 8-16 ГБ оперативної пам'яті, 8-ядерним процесором (наприклад, t3-large або m3.large) і швидким SSD на 400 ГБ (1000+ provisioned IOPS), що зменшило б час завантаження блоків до 6-8 годин. Після завершення, ми б зменшили конфігурацію до 2 ГБ оперативної пам'яті, 2-ядерного процесора (наприклад, t3.small) і звичайного HDD на 1 ТБ. Це коштує приблизно стільки ж, якщо б весь час ви використовували повільніший сервер, але це допоможе вам запустити роботу менш ніж за день замість того, аби чекати майже тиждень на початкове завантаження блоків.
 
-===== Permanent data storage (drive)
+===== Постійне сховище даних (накопичувач)
 
-If you use a mini-PC or rent a server, the storage can be the costliest part, costing as much as the computer and connectivity (data) added together.
+Якщо ви використовуєте міні-ПК або орендуєте сервер, сховище може бути найдорожчою частиною і коштуватиме, як комп’ютер та підключення разом взяті.
 
-Let's have a look at the different options available. First there are two main types of drives, Hard Disk Drives (HDDs) and Solid State Drives (SSDs). HDDs are cheaper and SSDs are faster, but both do the job.
+Давайте подивимось на різні доступні варіанти. По-перше, існує два основних типи накопичувачів, жорсткі диски (HDD) і твердотільні накопичувачі (SSD). HDD дешевші, SSD швидші, але обидва вони роблять свою роботу.
 
-The fastest SSDs available today use the NVMe interface. The NVMe SSDs are faster in high end machines, but also more costly.
-Traditional SATA-based SSDs are cheaper, but not as fast. SATA SSDs perform sufficiently well for your node setup.
-Smaller computers might not be able to take advantage of NVMe SSDs.
-For example, the Raspberry Pi 4 cannot benefit from them because of the limited bandwidth of its USB port.
+Найшвидші SSD, що доступні сьогодні, використовують інтерфейс NVMe. NVMe SSD швидші у висококласних машинах, але й дорожчі.
+Традиційні SATA SSD дешевші, але не такі швидкі. SATA SSD працюють достатньо добре для вашої ноди.
+Менші комп’ютери можуть бути не в змозі скористатися перевагами NVMe SSD.
+Наприклад, Raspberry Pi 4 не може ними скористатися через обмежену пропускну здатність USB-порту.
 
-To choose the size, let's look at the Bitcoin blockchain. As of September 2020 its size is 340GB including the transaction index and grows by roughly 60GB/year. If you want to have some margin available for future growth or to install other data on your node, purchase at least a 512GB drive or better yet a 1TB drive.
+Щоб обрати розмір, подивимось на блокчейн Біткоїну. Станом на вересень 2020 року його розмір становить 340 ГБ, включаючи індекс транзакцій, і збільшується приблизно на 60 ГБ/рік. Якщо ви хочете мати деякий запас для майбутнього росту або встановити ще щось на свою ноду, придбайте принаймні 512 ГБ або краще 1 ТБ.
 
-=== Using an installer or helper
+=== Використання інсталлятора або помічника
 
-Installing a Lightning node or a Bitcoin node may be daunting if you are not familiar with a command-line environment. Luckily, there are a number of projects that make "helpers", i.e. software that installs and configures the various components for you. You will still need to learn some command-line incantations to interact with your node, but most of the initial work is done for you.
+Встановлення ноди Lightning або Bitcoin може бути лякаючим, якщо ви не знайомі з середовищем командного рядка. На щастя, існує низка проектів, які створюють "помічників", тобто програмне забезпечення, яке встановлює та налаштовує різні компоненти замість вас. Вам все одно доведеться вивчити деякі "заклинання" командного рядка, щоб взаємодіяти з вашою нодою, але більшість початкових робіт робиться за вас.
 
 ==== RaspiBlitz
 
-One of the most popular and complete "helper" is _RaspiBlitz_, a project built by Christian Rotzoll. It is intended to be installed on a Raspberry Pi 4. RaspiBlitz comes with a recommended hardware "kit" that you can build in a matter of hours or at most a weekend. If you attend a Lightning "hackathon" in your city, you are likely to see many people working on their RaspiBlitz setup, swapping tips, and helping each other. You can find the RaspiBlitz project here:
+Одним з найпопулярніших та найбільш повних "помічників" є _RaspiBlitz_, проект, побудований Крістіаном Ротцоллом. Він призначений для встановлення на Raspberry Pi 4. RaspiBlitz постачається з рекомендованим апаратним «набором», який ви можете зібрати за лічені години або максимум за вікенд. Якщо ви відвідуєте Lightning "хакатон" у своєму місті, то, швидше за все, побачите багато людей, які працюють над налаштуванням своїх RaspiBlitz, обмінюються порадами та допомагають один одному. Ви можете знайти проект RaspiBlitz тут:
 
 https://github.com/rootzoll/raspiblitz
 
 image::images/raspiblitz.jpg[]
 
-In addition to a Bitcoin and Lightning node, RaspiBlitz can install a number of additional services, such as:
+На додаток до нод Bitcoin та Lightning, RaspiBlitz може встановити ряд додаткових сервісів, таких як:
 
-* TOR (Run as Hidden Service)
-* ElectRS (Electrum Server in Rust)
-* BTCPayServer (Cryptocurrency Payment Processor)
-* BTC-RPC-Explorer (Bitcoin Blockchain Explorer)
-* Ride The Lightning (Lightning Node Management GUI)
-* LNbits (Lightning wallet/accounts System)
-* SpecterDesktop (Multisig Trezor, Ledger, Coldcard Wallet & Specter-DIY)
-* LNDmanage (Advanced Channel Management CLI)
-* Loop (Submarine Swaps Service)
-* JoinMarket (CoinJoin Service)
+* TOR (для запуску Прихованих Сервісів)
+* ElectRS (Electrum сервер мовою Rust)
+* BTCPayServer (Процессинг криптовалютних платежів)
+* BTC-RPC-Explorer (Експлорер блокчейну Bitcoin)
+* Ride The Lightning (GUI для керування Lightning-нодою)
+* LNbits (Lightning гаманець/система аккаунтів)
+* SpecterDesktop (GUI для хардварних мультисиг-гаманців Trezor, Ledger, Coldcard & Specter-DIY)
+* LNDmanage (Просунута система управління каналами з командного рядка)
+* Loop (сервіс для Submarine Swaps)
+* JoinMarket (CoinJoin сервіс)
 
 
 ==== MyNode
 
-_MyNode_ is another popular open source "helper" project including a lot of Bitcoin related software. It is easy to install: you "flash" the installer onto an SD card and boot your mini-PC from the SD card. You do not need any monitor to use myNode as the administrative tools are accessible remotely from a browser. If your mini-PC has no monitor, mouse, or keyboard, you can manage it from another computer or even from your smartphone. Once installed, go to http://mynode.local/ and create a Lightning wallet and node in two clicks.
+_MyNode_ - це ще один популярний "помічник" з відкритим кодом, що включає багато програм, пов'язаних з Бткоїном. Встановити його просто: ви «прошиваєте» програму встановлення на SD-карту та завантажуєте свій міні-ПК з SD-карти. Вам не потрібен монітор, щоб використовувати myNode, оскільки панель адміністрування доступна віддалено через браузер. Якщо у вашому міні-ПК немає монітора, миші чи клавіатури, ви можете керувати ним з іншого комп'ютера або навіть зі свого смартфона. Після встановлення перейдіть на http://mynode.local/ і створіть гаманець і вузол Lightning у два кліки.
 
-You can find the MyNode project here:
+Ви можете знайти проект MyNode тут:
 
 https://mynodebtc.com/
 
-In addition to a Bitcoin and Lightning node, MyNode can optionally install a variety of additional services, such as:
+На додаток до нод Bitcoin та Lightning, MyNode може додатково встановити різні додаткові сервіси, такі як:
 
-- Ride The Lightning (Lightning Node Management GUI)
-- VPN Support for remote management or wallet (OpenVPN)
-- lndmanage (CLI management tool)
-- btc-rpc-explorer (A Bitcoin blockchain explorer)
+- Ride The Lightning (GUI для керування Lightning-нодою)
+- Підтримка VPN для віддаленного управління (OpenVPN)
+- lndmanage (система управління з командного рядка)
+- btc-rpc-explorer (Експлорер блокчейну Bitcoin)
 
 ==== BTCPay Server
 
-While not initially designed as an installation "helper", the e-commerce and payment platform _BTCPay Server_ has an incredibly easy installation system that uses docker containers and +docker-compose+ to install a Bitcoin node, Lightning node, and payment gateway, among many other services. It can be installed on a variety of hardware platforms, from a simple Raspberry Pi 4 (4GB recommended) to a mini-PC, old laptop, desktop or server.
+Платформа для електронної комерції та платежів _BTCPay Server_ спочатку не була створена як інсталяційний "помічник", але вона має надзвичайно просту систему установки, яка використовує docker-контейнери та +docker-compose+ для встановлення Біткоїн-ноди, Lightning-ноди, платіжного шлюзу та багатьох інших послуг. _BTCPay Server_ можна встановити на різне апаратне забезпечення від простого Raspberry Pi 4 (рекомендується 4 ГБ) до міні-ПК, старого ноутбука, настільного комп'ютера або сервера.
 
-BTCPay Server is a fully-featured self-hosted self-custody e-commerce platform that can be integrated with many e-commerce platforms such as Wordpress Woocommerce and others. The installation of the full node is only a step of the e-commerce platform installation.
-While originally developed as a feature-for-feature replacement of the _Bitpay_ commercial payment service and API, it has evolved past that to be a complete platform for BTC and Lighting services related to e-commerce. For many sellers or shops it is a one-shop turn-key solution to e-commerce.
+_BTCPay Server_ - це повнофункціональна само-кастодіальна платформа для електронної комерції, яка може бути інтегрована з багатьма платформами електронної комерції, такими як Wordpress Woocommerce та іншими. Встановлення повної ноди є лише кроком встановлення платформи електронної комерції.
+Хоча спочатку _BTCPay Server_ був розроблений як функціональна заміна комерційної платіжного сервісу та API _Bitpay_, він розвинувся, щоб стати повною платформою для BTC та Lighting сервісів, пов’язаних з електронною комерцією. Для багатьох продавців або магазинів це електронне комерційне рішення під ключ.
 
-More information can be found at:
+Більше інформації тут:
 
 https://btcpayserver.org/
 
-In addition to a Bitcoin and Lightning node, BTCPay Server can also install a variety of services, including:
+На додаток до нод Bitcoin та Lightning, BTCPay Server може додатково встановити різні додаткові сервіси, такі як:
 
-- c-Lightning or LND Lightning node
-- Litecoin support
-- Monero support
-- Spark server (c-lightning web wallet)
-- Charge server (c-lightning e-commerce API)
-- Ride The Lightning (Lightning node management web GUI)
-- Many BTC forks
-- BTCTransmuter (event-action automation service supporting currency exchange)
+- Lightning-нода c-Lightning або LND
+- Підтримка Litecoin
+- Підтримка Monero
+- Spark server (c-lightning веб-гаманець)
+- Charge server (c-lightning API для електронної комерції)
+- Ride The Lightning (GUI для керування Lightning-нодою)
+- Багато форків BTC
+- BTCTransmuter (сервіс обробки подій з підтримкою обміну валют)
 
-The number of additional services and features is growing rapidly, so the list above is only a small subset of what is available on the BTCPay Server platform.
+Кількість додаткових сервісів та функцій швидко зростає, тому наведений вище список - лише невелика частина того, що доступно на платформі BTCPay Server.
 
-==== Bitcoin node or lightweight Lightning
+==== Повна або легка нода Біткоїн
 
-One critical choice for your setup will be the choice of the Bitcoin node and its configuration. _Bitcoin Core_, the reference implementation, is the most common choice but not the only choice available. One alternative choice is _btcd_, which is a Go-language implementation of a Bitcoin node. Btcd supports some features that are useful for running an LND Lightning node and are not available in Bitcoin Core.
+Важливим вибором є вибір ноди Біткоїн та її конфігурації. _Bitcoin Core_, референсна реалізація, є найпоширенішим вибором, але не єдиним з доступних. Одним з альтернативних варіантів є _btcd_, імплементація ноди Біткоїн мовою Go. Btcd підтримує деякі функції, недоступні в Bitcoin Core, але корисні для запуску Lightning-ноди LND.
 
-A second consideration is whether you will run an _archival_ Bitcoin node with a full copy of the blockchain (some 350GB in mid-2020) or a _pruned_ blockchain that only keeps the most recent blocks. A pruned blockchain can save you some disk space but will still need to download the full blockchain at least once (during the Initial Block Download). Hence it won't save you any network traffic. Using a pruned node to run a Lightning node is still an experimental capability and might not support all the functionality. However, many people are running a node like that successfully.
+Друге питання - утримувати _архівну_ Біткоїн-ноду з повною копією блокчейну (близько 350 ГБ в середині 2020 року) або _обрізаний_ (_pruned_) блокчейн, який зберігає лише найновіші блоки. Обрізаний блокчейн може заощадити деяке місце на диску, але повний блокчейн все одно потрібно буде завантажити принаймі один раз (під час початкового завантаження блоків), тому це не зекономить мережевий трафік. Використання обрізаної ноди для запуску Lightning-ноди все ще є експериментальним і може не підтримувати весь функціонал. Однак багато людей успішно використовують таку ноду.
 
-Finally, you also have the option of not running a Bitcoin node at all. Instead you can operate the LND Lightning node in "lightweight" mode, using the _neutrino_ protocol to retrieve blockchain information from public Bitcoin nodes operated by others. Running like this means that you are taking resources from the Bitcoin network without offering any in return. Instead, you are offering your resources and contributing to the Lightning Network community. For smaller Lightning nodes this will generally reduce network traffic in comparison to running a full Bitcoin node.
+Нарешті, у вас також є можливість взагалі не запускати Біткоїн-ноду. Натомість ви можете використовувати Lightning-ноду LND у "полегшеному" режимі, використовуючи протокол _neutrino_ для отримання інформації про блокчейн із загальнодоступних Біткоїн-нод, що утримуються іншими людьми. Такий спосіб означатиме, що ви використовуєте ресурси мережі Біткоїн, нічого не віддаючи взамін. Натомість ви даєте свої ресурси та робите внесок у спільноту Lightning Network. Для невеликих Lightning-нод це, як правило, зменшує мережевий трафік порівняно із запуском повної ноди Біткоїн.
 
-Keep in mind that operating a Bitcoin node allows you to support other services, besides and on top of a Lightning node. These other services may require an archival (not pruned) Bitcoin node and often can't run without a Bitcoin node. Consider upfront what other services you may want to run now or in the future, to make an informed decision on the type of Bitcoin node you select.
+Майте на увазі, що управління Біткоїн-нодою дозволяє вам підтримувати інші сервіси, також і такі що працюють поверх Lightning. Для цих інших сервісів може знадобитися архівна (не обрізана) Біткоїн-нода, і вони часто взагалі не зможуть працювати без Біткоїн-ноди. Подумайте заздалегідь, які інші сервіси ви можете хотіти використовувати зараз чи в майбутньому, щоб прийняти обґрунтоване рішення щодо типу обраної вами Біткоїн-ноди.
 
-The bottom line for this decision is: If you can afford a disk larger than 500GB, run a full archival Bitcoin node. You will be contributing resources to the Bitcoin system and helping others who cannot afford to do so. If you can't afford such a big disk, run a pruned node. If you can't afford the disk or the bandwidth for even a pruned node, run a lightweight LND node over neutrino.
+Суть цього рішення полягає в наступному: Якщо ви можете дозволити собі диск розміром більше 500 Гб, запустіть повну архівну ноду Біткоїн. Ви будете вносити ресурси в систему Біткоїн і допомагати іншим, хто не може собі цього дозволити. Якщо ви не можете дозволити собі настільки великий диск, запустіть обрізану ноду. Якщо ви не можете дозволити собі диск або пропускну здатність навіть для обрізаної ноди, запустіть легку ноду LND з neutrino.
 
-==== Operating system choice
+==== Вибір операційної системи
 
-The next step is to select an operating system for your node. The vast majority of internet servers run on some variant of Linux. Linux is the platform of choice for the internet because it is a powerful, open-source operating system. Linux, however, has a steep learning curve and requires familiarity with a command-line environment. It is often intimidating for new users.
+Наступним кроком є вибір операційної системи для вашої ноди. Переважна більшість Інтернет-серверів працює на якомусь із варіантів Linux. Linux - це обрана платформа для Інтернету, оскільки це потужна операційна система з відкритим кодом. Однак Linux потребує вивчення і вимагає добре розумітися у середовищі командного рядка. Це часто відлякує нових користувачів.
 
-Ultimately, most of the services can be run on any modern POSIX operating system, which includes Mac OS, Windows, and of course Linux. Your choice should be driven more by your familiarity and comfort with an operating system and your learning objectives. If you want to expand your knowledge and learn how to operate a Linux system, this is a great opportunity to do so with a specific project and a clear goal. If you just want to get a node up and running, go with what you know.
+Зрештою, більшість служб можна запустити на будь-якій сучасній операційній системі що працює згідно із стандартом POSIX, що включає Mac OS, Windows і, звичайно, Linux. Ваш вибір має засновуватися на вашому знайомстві та комфортній роботі з операційною системою та вашими навчальними цілями. Якщо ви хочете розширити свої знання та навчитися керувати системою Linux, це чудова можливість зробити це на конкретному проекті та маючи чітку мету. Якщо ви просто хочете, щоб нода був працювала, оберіть ту ОС, яку знаєте.
 
-Nowadays, many services are also delivered in the form of containers, usually based on the _Docker_ system. These containers can be deployed on a variety of operating systems, abstracting the underlying OS. You may need to learn some Linux CLI commands nonetheless, as most of the containers run some variant of Linux inside.
+У наш час багато сервісів також поставляються у вигляді контейнерів, як правило, на базі системи _Docker_. Ці контейнери можна розгорнути на різних операційних системах, абстрагуючись від базової ОС. Можливо, вам доведеться вивчити деякі команди командного рядку Linux, оскільки більшість контейнерів запускають якийсь варіант Linux всередині.
 
 === Choose your Lightning node implementation
 
